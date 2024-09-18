@@ -22,6 +22,30 @@ const NguoiDungServices = {
         }
     },
 
+    // Lấy thông tin nguời dùng hiện tại
+    profile: async () => {
+        try {
+            const response = await axiosInstance.get(`/users/profile`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Cập nhật người dùng
+    update: async (data) => {
+        try {
+            const response = await axiosInstance.put(`/users`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     // Cấm nguời dùng
     block: async (id) => {
         try {

@@ -38,7 +38,11 @@ const ChuyenMucServices = {
     // Cập nhật bài viết
     update: async (id, data) => {
         try {
-            const response = await axiosInstance.put(`/categories/${id}`, data);
+            const response = await axiosInstance.put(`/categories/${id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             return response;
         } catch (error) {
             throw error;

@@ -94,7 +94,7 @@ const Header = () => {
 
                 <li className="nav-header">QUẢN LÝ CÁ NHÂN</li>
                 <li className="nav-item has-treeview">
-                  <Link to="/doi-thong-tin" className="nav-link">
+                  <Link to="/admin/ca-nhan" className="nav-link">
                     <i className="nav-icon fa-solid fa-lock" />
                     <p>
                       Đổi Thông Tin

@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import BaiVietRoutes from './BaiVietRoutes';
 import ChuyenMucRoutes from './ChuyenMucRoutes';
 import NguoiDungRoutes from './NguoiDungRoutes';
+import CaNhanRoutes from './CaNhanRoutes';
 import DangNhapRoutes from './DangNhapRoutes';
 
 const AppRoutes = () => {
@@ -11,6 +12,7 @@ const AppRoutes = () => {
       <Route path="admin/bai-viet/*" element={<BaiVietRoutes />} />
       <Route path="admin/chuyen-muc/*" element={<ChuyenMucRoutes />} />
       <Route path="admin/nguoi-dung/*" element={<NguoiDungRoutes />} />
+      <Route path="admin/ca-nhan/*" element={<CaNhanRoutes />} />
       <Route path="admin/dang-nhap/" element={<DangNhapRoutes />} />
     </Routes>
   );
