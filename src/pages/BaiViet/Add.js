@@ -1,8 +1,193 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import ContentHeader from '../../components/ContentHeader';
+import { Link, useNavigate } from 'react-router-dom';
+import BaiVietServices from '../../services/BaiVietServices'; // Import service để gọi API
+import { toast } from 'react-toastify';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const Add = () => {
+  const [title, setTitle] = useState('');
+  const [slug, setSlug] = useState(''); 
+  const [tags, setTags] = useState(''); 
+  const [image, setImage] = useState(null);
+  const [content, setContent] = useState(''); // State cho phần content
+  const navigate = useNavigate(); 
+
+  const breadcrumbs = [
+    { label: 'Trang Chủ', url: '/' },
+    { label: 'Bài Viết', url: '/admin/bai-viet' },
+    { label: 'Thêm Bài Viết', url: '' },
+  ];
+
+  // Hàm chuyển đổi tiêu đề thành slug
+  const createSlug = (title) => {
+    // Bản đồ chuyển đổi các ký tự có dấu thành không dấu
+    const vietnameseToAscii = (str) => {
+      const map = {
+        'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+        'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+        'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+        'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+        'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+        'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+        'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+        'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+        'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+        'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+        'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+        'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+        'đ': 'd',
+        // Thêm các ký tự khác nếu cần
+      };
+      return str.replace(/./g, char => map[char] || char);
+    };
+  
+    return vietnameseToAscii(title)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')  // Thay thế ký tự không phải chữ cái hoặc số bằng dấu gạch ngang
+      .replace(/(^-|-$)/g, '');     // Xóa dấu gạch ngang đầu hoặc cuối
+  };
+
+  useEffect(() => {
+    setSlug(createSlug(title));
+  }, [title]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('slug', slug);
+    formData.append('tags', tags);
+    formData.append('is_draft', 0);
+    formData.append('image_url', image);
+    formData.append('content', content); // Thêm phần content vào FormData
+    
+    const addArticle = await BaiVietServices.add(formData);
+
+    if (addArticle.status === 201) {
+      toast.success(addArticle.data.message);
+      navigate('/admin/bai-viet'); 
+    } else {
+      toast.error(addArticle.response.data.message);
+    }
+  };
+
   return (
-    <h2 className='text-center'>add don vi</h2>
+    <div className="content-wrapper" style={{ minHeight: '1203.31px' }}>
+      <ContentHeader title='Thêm Bài Viết' breadcrumbs={breadcrumbs} />
+      <section className="content">
+        <div className="container-fluid">
+          <div className="card card-default">
+            <div className="card-body">
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="form-group">
+                      <label htmlFor="title">Tiêu Đề</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="title"
+                        name="title"
+                        placeholder="Tiêu Đề"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-12">
+                    <div className="form-group">
+                      <label htmlFor="slug">Đường Dẫn</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="slug"
+                        name="slug"
+                        placeholder="Đường dẫn"
+                        value={slug}
+                        onChange={(e) => setSlug(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-12">
+                    <div className="form-group">
+                      <label htmlFor="tags">Từ Khóa</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="tags"
+                        name="tags"
+                        placeholder="Từ khóa cách bởi dấu ,"
+                        value={tags}
+                        onChange={(e) => setTags(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-12">
+                    <div className="form-group">
+                      <label htmlFor="image">Hình Ảnh</label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        id="image"
+                        name="image"
+                        onChange={(e) => setImage(e.target.files[0])}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-12">
+                    <div className="form-group">
+                      <label htmlFor="content">Nội Dung Bài Viết</label>
+                      <CKEditor
+                        editor={ClassicEditor}
+                        data={content || ''}
+                        onChange={(event, editor) => {
+                          const data = editor.getData();
+                          setContent(data); // Cập nhật state content
+                        }}
+                        config={{
+                          toolbar: [
+                            'heading', '|', 
+                            'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '|',
+                            'link', 'imageUpload', 'blockQuote', '|', 
+                            'bulletedList', 'numberedList', 'todoList', '|',
+                            'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|',
+                            'mediaEmbed', 'code', 'codeBlock', 'htmlEmbed', '|',
+                            'alignment', 'outdent', 'indent', '|', 
+                            'undo', 'redo', '|', 
+                            'fontColor', 'fontBackgroundColor', 'highlight', '|', 
+                            'fontSize', 'fontFamily', 'removeFormat', '|',
+                            'specialCharacters', 'horizontalLine', 'pageBreak', 'findAndReplace', 'sourceEditing'
+                          ],
+                          image: {
+                            toolbar: [
+                              'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', 'linkImage'
+                            ]
+                          },
+                          table: {
+                            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                          },
+                          ckfinder: {
+                            uploadUrl: 'http://127.0.0.1:3001/articles/uploadImage'
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <Link className="btn btn-success mr-2" to="/admin/bai-viet">Quay Lại</Link>
+                <button className="btn btn-primary" type="submit">Thêm Bài Viết</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };
 
