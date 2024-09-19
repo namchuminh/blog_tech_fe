@@ -24,7 +24,7 @@ const Header = () => {
   }
 
   return (
-    <body className="hold-transition sidebar-mini layout-fixed">
+    <div className="hold-transition sidebar-mini layout-fixed">
       <div className="wrapper">
         {/* Navbar */}
         <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -117,7 +117,7 @@ const Header = () => {
         </aside>
       </div>
 
-    </body>
+    </div>
   );
 };
 

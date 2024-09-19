@@ -4,6 +4,7 @@ import BaiVietRoutes from './BaiVietRoutes';
 import ChuyenMucRoutes from './ChuyenMucRoutes';
 import NguoiDungRoutes from './NguoiDungRoutes';
 import CaNhanRoutes from './CaNhanRoutes';
+import BinhLuanRoutes from './BinhLuanRoutes';
 import DangNhapRoutes from './DangNhapRoutes';
 
 const AppRoutes = () => {
@@ -13,6 +14,7 @@ const AppRoutes = () => {
       <Route path="admin/chuyen-muc/*" element={<ChuyenMucRoutes />} />
       <Route path="admin/nguoi-dung/*" element={<NguoiDungRoutes />} />
       <Route path="admin/ca-nhan/*" element={<CaNhanRoutes />} />
+      <Route path="admin/binh-luan/*" element={<BinhLuanRoutes />} />
       <Route path="admin/dang-nhap/" element={<DangNhapRoutes />} />
     </Routes>
   );
