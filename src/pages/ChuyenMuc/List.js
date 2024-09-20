@@ -30,6 +30,7 @@ const List = () => {
 
   useEffect(() => {
     fetchData(currentPage, searchTerm); // Gọi API với từ khóa tìm kiếm
+    window.scrollTo(0, 0);
   }, [currentPage, searchTerm]);
 
   const renderRow = (item, index) => (

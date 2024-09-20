@@ -119,16 +119,13 @@ const Show = () => {
                             config={{
                               toolbar: [
                                 'heading', '|', 
-                                'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '|',
+                                'bold', 'italic', '|',
                                 'link', 'imageUpload', 'blockQuote', '|', 
-                                'bulletedList', 'numberedList', 'todoList', '|',
+                                'bulletedList', 'numberedList', '|',
                                 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|',
-                                'mediaEmbed', 'code', 'codeBlock', 'htmlEmbed', '|',
-                                'alignment', 'outdent', 'indent', '|', 
-                                'undo', 'redo', '|', 
-                                'fontColor', 'fontBackgroundColor', 'highlight', '|', 
-                                'fontSize', 'fontFamily', 'removeFormat', '|',
-                                'specialCharacters', 'horizontalLine', 'pageBreak', 'findAndReplace', 'sourceEditing'
+                                'mediaEmbed', '|',
+                                'outdent', 'indent', '|', 
+                                'undo', 'redo', '|'
                               ],
                               image: {
                                 toolbar: [
