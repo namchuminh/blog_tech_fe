@@ -16,7 +16,7 @@ const List = () => {
     { label: 'Bài Viết', url: '' },
   ];
 
-  const headers = ["#", "Hình Ảnh", "Tiêu Đề", "Đường Dẫn", "Phiên Bản", "Tác Giả", "Trạng Thái", "Hành Động"];
+  const headers = ["#", "Hình Ảnh", "Tiêu Đề", "Lượt Xem", "Tác Giả", "Trạng Thái", "Phiên Bản", "Hành Động"];
 
   const fetchData = async (page = 1, search = "") => {
     try {
@@ -44,15 +44,7 @@ const List = () => {
         />
       </td>
       <td>{item.title}</td>
-      <td>{item.slug}</td>
-      <td>
-        {
-          item.is_draft == true ? 
-            <span className="badge badge-danger">Bản Nháp</span>
-          :
-            <span className="badge badge-primary">Chính Thức</span>
-        }
-      </td>
+      <td><span className="badge badge-success"><i className="fa-regular fa-eye"></i> {item.views.length == 0 ? "0 lượt xem" : `${item.views[0].view_count} lượt xem`}</span></td>
       <td><Link to={`/admin/nguoi-dung/${item.user.username}`}>{item.user.username}</Link></td>
       <td>
         {
@@ -60,6 +52,14 @@ const List = () => {
             <i>Đã Duyệt Bài</i>
           :
             <button className='btn btn-success' onClick={() => handlePublic(item.article_id)}><i className="fa-solid fa-check"></i> Duyệt Bài Viết</button>
+        }
+      </td>
+      <td>
+        {
+          item.is_draft == true ? 
+            <span className="badge badge-danger">Bản Nháp</span>
+          :
+            <span className="badge badge-primary">Chính Thức</span>
         }
       </td>
       <td>
