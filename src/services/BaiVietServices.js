@@ -26,9 +26,9 @@ const ChuyenMucServices = {
     },
 
     // Lấy chi tiết bài viết
-    show: async (id) => {
+    detail: async (id) => {
         try {
-            const response = await axiosInstance.get(`/articles/${id}`);
+            const response = await axiosInstance.get(`/articles/${id}/detail`);
             return response;
         } catch (error) {
             throw error;
@@ -39,6 +39,20 @@ const ChuyenMucServices = {
     update: async (id, data) => {
         try {
             const response = await axiosInstance.put(`/articles/${id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Lưu bản nháp bài viết
+    draft: async (id, data) => {
+        try {
+            const response = await axiosInstance.put(`/articles/${id}/draft`, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

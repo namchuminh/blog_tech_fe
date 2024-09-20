@@ -53,21 +53,26 @@ const Add = () => {
     setSlug(createSlug(title));
   }, [title]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, is_draft = 0) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', title);
     formData.append('slug', slug);
     formData.append('tags', tags);
-    formData.append('is_draft', 0);
+    formData.append('is_draft', is_draft);
     formData.append('image_url', image);
     formData.append('content', content); // Thêm phần content vào FormData
     
     const addArticle = await BaiVietServices.add(formData);
 
     if (addArticle.status === 201) {
-      toast.success(addArticle.data.message);
-      navigate('/admin/bai-viet'); 
+      if(is_draft == 1){
+        toast.success("Đã lưu bản nháp bài viết");
+      }else{
+        toast.success(addArticle.data.message);
+      }
+      
+      navigate(`/admin/bai-viet/${addArticle.data.article.article_id}`); 
     } else {
       toast.error(addArticle.response.data.message);
     }
@@ -78,113 +83,123 @@ const Add = () => {
       <ContentHeader title='Thêm Bài Viết' breadcrumbs={breadcrumbs} />
       <section className="content">
         <div className="container-fluid">
-          <div className="card card-default">
-            <div className="card-body">
-              <form onSubmit={handleSubmit} encType="multipart/form-data">
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <label htmlFor="title">Tiêu Đề</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="title"
-                        name="title"
-                        placeholder="Tiêu Đề"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <label htmlFor="slug">Đường Dẫn</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="slug"
-                        name="slug"
-                        placeholder="Đường dẫn"
-                        value={slug}
-                        onChange={(e) => setSlug(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <label htmlFor="tags">Từ Khóa</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="tags"
-                        name="tags"
-                        placeholder="Từ khóa cách bởi dấu ,"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <label htmlFor="image">Hình Ảnh</label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        id="image"
-                        name="image"
-                        onChange={(e) => setImage(e.target.files[0])}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <label htmlFor="content">Nội Dung Bài Viết</label>
-                      <CKEditor
-                        editor={ClassicEditor}
-                        data={content || ''}
-                        onChange={(event, editor) => {
-                          const data = editor.getData();
-                          setContent(data); // Cập nhật state content
-                        }}
-                        config={{
-                          toolbar: [
-                            'heading', '|', 
-                            'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '|',
-                            'link', 'imageUpload', 'blockQuote', '|', 
-                            'bulletedList', 'numberedList', 'todoList', '|',
-                            'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|',
-                            'mediaEmbed', 'code', 'codeBlock', 'htmlEmbed', '|',
-                            'alignment', 'outdent', 'indent', '|', 
-                            'undo', 'redo', '|', 
-                            'fontColor', 'fontBackgroundColor', 'highlight', '|', 
-                            'fontSize', 'fontFamily', 'removeFormat', '|',
-                            'specialCharacters', 'horizontalLine', 'pageBreak', 'findAndReplace', 'sourceEditing'
-                          ],
-                          image: {
+        <div className='row'>
+          <div className='col-md-8'>
+            <div className="card card-default">
+              <div className="card-body">
+                  <div className="row">
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <CKEditor
+                          editor={ClassicEditor}
+                          data={content || ''}
+                          onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setContent(data); // Cập nhật state content
+                          }}
+                          config={{
                             toolbar: [
-                              'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', 'linkImage'
-                            ]
-                          },
-                          table: {
-                            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                          },
-                          ckfinder: {
-                            uploadUrl: 'http://127.0.0.1:3001/articles/uploadImage'
-                          },
-                        }}
-                      />
+                              'heading', '|', 
+                              'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '|',
+                              'link', 'imageUpload', 'blockQuote', '|', 
+                              'bulletedList', 'numberedList', 'todoList', '|',
+                              'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|',
+                              'mediaEmbed', 'code', 'codeBlock', 'htmlEmbed', '|',
+                              'alignment', 'outdent', 'indent', '|', 
+                              'undo', 'redo', '|', 
+                              'fontColor', 'fontBackgroundColor', 'highlight', '|', 
+                              'fontSize', 'fontFamily', 'removeFormat', '|',
+                              'specialCharacters', 'horizontalLine', 'pageBreak', 'findAndReplace', 'sourceEditing'
+                            ],
+                            image: {
+                              toolbar: [
+                                'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', 'linkImage'
+                              ]
+                            },
+                            table: {
+                              contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                            },
+                            ckfinder: {
+                              uploadUrl: 'http://127.0.0.1:3001/articles/uploadImage'
+                            },
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <Link className="btn btn-success mr-2" to="/admin/bai-viet">Quay Lại</Link>
-                <button className="btn btn-primary" type="submit">Thêm Bài Viết</button>
-              </form>
+              </div>
             </div>
           </div>
+          <div className='col-md-4'>
+            <div className="card card-default">
+              <div className="card-body">
+                  <div className="row mb-2">
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label htmlFor="title">Tiêu Đề</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="title"
+                          name="title"
+                          placeholder="Tiêu Đề"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label htmlFor="slug">Đường Dẫn</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="slug"
+                          name="slug"
+                          placeholder="Đường dẫn"
+                          value={slug}
+                          onChange={(e) => setSlug(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label htmlFor="tags">Từ Khóa</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="tags"
+                          name="tags"
+                          placeholder="Từ khóa cách bởi dấu ,"
+                          value={tags}
+                          onChange={(e) => setTags(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <label htmlFor="image">Hình Ảnh</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          id="image"
+                          name="image"
+                          onChange={(e) => setImage(e.target.files[0])}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <Link className="btn btn-success mr-2" to="/admin/bai-viet">Quay Lại</Link>
+                  <button className="btn btn-info mr-2" onClick={(e) => handleSubmit(e, 1)}>Lưu Bản Nháp</button>
+                  <button className="btn btn-primary" onClick={(e) => handleSubmit(e)}>Đăng Bài Viết</button>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </section>
     </div>

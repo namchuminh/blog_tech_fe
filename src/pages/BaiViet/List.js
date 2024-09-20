@@ -16,7 +16,7 @@ const List = () => {
     { label: 'Bài Viết', url: '' },
   ];
 
-  const headers = ["#", "Hình Ảnh", "Tiêu Đề", "Đường Dẫn", "Từ Khóa", "Tác Giả", "Trạng Thái", "Hành Động"];
+  const headers = ["#", "Hình Ảnh", "Tiêu Đề", "Đường Dẫn", "Phiên Bản", "Tác Giả", "Trạng Thái", "Hành Động"];
 
   const fetchData = async (page = 1, search = "") => {
     try {
@@ -30,6 +30,7 @@ const List = () => {
 
   useEffect(() => {
     fetchData(currentPage, searchTerm); // Gọi API với từ khóa tìm kiếm
+    window.scrollTo(0, 0);
   }, [currentPage, searchTerm]);
 
   const renderRow = (item, index) => (
@@ -44,7 +45,14 @@ const List = () => {
       </td>
       <td>{item.title}</td>
       <td>{item.slug}</td>
-      <td>{item.tags}</td>
+      <td>
+        {
+          item.is_draft == true ? 
+            <span className="badge badge-danger">Bản Nháp</span>
+          :
+            <span className="badge badge-primary">Chính Thức</span>
+        }
+      </td>
       <td><Link to={`/admin/nguoi-dung/${item.user.username}`}>{item.user.username}</Link></td>
       <td>
         {

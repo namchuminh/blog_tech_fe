@@ -35,8 +35,8 @@ const List = () => {
   const renderRow = (item, index) => (
     <>
       <td>{index + 1}</td>
-      <td><Link to={`http://127.0.0.1:3000/bai-viet/${item.article.slug}`}>{item.article.title}</Link></td>
-      <td><Link to={`http://127.0.0.1:3000/admin/nguoi-dung/${item.user.username}`}>{item.user.username}</Link></td>
+      <td><Link to={`/bai-viet/${item.article.slug}`}>{item.article.title}</Link></td>
+      <td><Link to={`/admin/nguoi-dung/${item.user.username}`}>{item.user.username}</Link></td>
       <td>{item.content}</td>
       <td>{item.createdAt}</td>
       <td>
