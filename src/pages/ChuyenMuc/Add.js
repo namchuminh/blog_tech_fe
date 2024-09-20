@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContentHeader from '../../components/ContentHeader';
 import { Link, useNavigate } from 'react-router-dom';
 import ChuyenMucServices from '../../services/ChuyenMucServices'; // Import service để gọi API
@@ -15,6 +15,39 @@ const Add = () => {
     { label: 'Chuyên Mục', url: '/admin/chuyen-muc' },
     { label: 'Thêm Chuyên Mục', url: '' },
   ];
+
+  // Hàm chuyển đổi tiêu đề thành slug
+  const createSlug = (name) => {
+    // Bản đồ chuyển đổi các ký tự có dấu thành không dấu
+    const vietnameseToAscii = (str) => {
+      const map = {
+        'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+        'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+        'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+        'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+        'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+        'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+        'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+        'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+        'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+        'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+        'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+        'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+        'đ': 'd',
+        // Thêm các ký tự khác nếu cần
+      };
+      return str.replace(/./g, char => map[char] || char);
+    };
+
+    return vietnameseToAscii(name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')  // Thay thế ký tự không phải chữ cái hoặc số bằng dấu gạch ngang
+      .replace(/(^-|-$)/g, '');     // Xóa dấu gạch ngang đầu hoặc cuối
+  };
+
+  useEffect(() => { 
+    setSlug(createSlug(name));
+  }, [name])
 
   const handleSubmit = async (e) => {
     e.preventDefault();

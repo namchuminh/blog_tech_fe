@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import ContentHeader from '../../components/ContentHeader';
 import { Link, useNavigate } from 'react-router-dom';
 import BaiVietServices from '../../services/BaiVietServices'; // Import service để gọi API
+import ChungServices from '../../services/ChungServices'; // Import service để gọi API
 import { toast } from 'react-toastify';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useParams } from 'react-router-dom';
+import Select from 'react-select';
+
 
 const Show = () => {
   const [title, setTitle] = useState('');
@@ -14,6 +17,8 @@ const Show = () => {
   const [image, setImage] = useState(null);
   const [content, setContent] = useState(''); // State cho phần content
   const [isDraft, setIsDraft] = useState(false);
+  const [categories, setCategories] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const navigate = useNavigate(); 
 
   const { id } = useParams();
@@ -53,6 +58,15 @@ const Show = () => {
       .replace(/(^-|-$)/g, '');     // Xóa dấu gạch ngang đầu hoặc cuối
   };
 
+  const getCategories = async () => {
+    const response = await ChungServices.list_categories();
+    const categoriesOptions = response.data.categories.map((category) => ({
+      value: category.category_id,
+      label: category.name,
+    }));
+    setCategories(categoriesOptions);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const detail = await BaiVietServices.detail(id);
@@ -62,12 +76,19 @@ const Show = () => {
         setTags(detail.data.article.tags)
         setContent(detail.data.article.content)
         setIsDraft(detail.data.article.is_draft)
+
+        const selectedCategoriesDefault = detail.data.categories.map(category => ({
+            value: category.category_id,
+            label: category.name
+        }));
+        setSelectedCategories(selectedCategoriesDefault);
       }else{
         navigate('/admin/bai-viet'); 
       }
     }
 
     fetchData();
+    getCategories();
     setSlug(createSlug(title));
     window.scrollTo(0, 0);
   }, [title]);
@@ -81,6 +102,7 @@ const Show = () => {
     formData.append('is_draft', is_draft);
     formData.append('image_url', image);
     formData.append('content', content); // Thêm phần content vào FormData
+    formData.append("categories", JSON.stringify(selectedCategories));
     
     const addArticle = await BaiVietServices.update(id, formData);
 
@@ -95,6 +117,10 @@ const Show = () => {
     } else {
       toast.error(addArticle.response.data.message);
     }
+  };
+
+  const handleCategoryChange = (selectedOptions) => {
+    setSelectedCategories(selectedOptions);
   };
 
   return (
@@ -192,6 +218,21 @@ const Show = () => {
                             value={tags}
                             onChange={(e) => setTags(e.target.value)}
                             required
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-12">
+                        <div className="form-group">
+                          <label htmlFor="categories">Chọn Danh Mục</label>
+                          <Select
+                            isMulti
+                            name="categories"
+                            options={categories} // Danh sách các tùy chọn
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                            value={selectedCategories}
+                            onChange={handleCategoryChange}
+                            placeholder="Chọn danh mục"
                           />
                         </div>
                       </div>
