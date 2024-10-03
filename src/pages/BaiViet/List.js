@@ -16,7 +16,7 @@ const List = () => {
     { label: 'Bài Viết', url: '' },
   ];
 
-  const headers = ["#", "Hình Ảnh", "Tiêu Đề", "Lượt Xem", "Tác Giả", "Trạng Thái", "Phiên Bản", "Hành Động"];
+  const headers = ["#", "Hình Ảnh", "Tiêu Đề", "Lượt Xem", "Tác Giả", "Trạng Thái", "Hành Động"];
 
   const fetchData = async (page = 1, search = "") => {
     try {
@@ -49,17 +49,9 @@ const List = () => {
       <td>
         {
           item.privacy == "public" ? 
-            <i>Đã Duyệt Bài</i>
+            <span className="badge badge-primary">Đã Duyệt Bài</span>
           :
             <button className='btn btn-success' onClick={() => handlePublic(item.article_id)}><i className="fa-solid fa-check"></i> Duyệt Bài Viết</button>
-        }
-      </td>
-      <td>
-        {
-          item.is_draft == true ? 
-            <span className="badge badge-danger">Bản Nháp</span>
-          :
-            <span className="badge badge-primary">Chính Thức</span>
         }
       </td>
       <td>
