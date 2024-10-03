@@ -89,9 +89,14 @@ const Show = () => {
 
     fetchData();
     getCategories();
-    setSlug(createSlug(title));
     window.scrollTo(0, 0);
-  }, [title]);
+  }, []);
+
+  const handleTitleChange = (e, title) => {
+    e.preventDefault();
+    setTitle(title)
+    setSlug(createSlug(title));
+  }
 
   const handleSubmit = async (e, is_draft = 0) => {
     e.preventDefault();
@@ -186,7 +191,7 @@ const Show = () => {
                             name="title"
                             placeholder="Tiêu Đề"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            onChange={(e) => handleTitleChange(e, e.target.value)}
                             required
                           />
                         </div>
