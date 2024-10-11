@@ -7,6 +7,11 @@ import CaNhanRoutes from './CaNhanRoutes';
 import BinhLuanRoutes from './BinhLuanRoutes';
 import DangNhapRoutes from './DangNhapRoutes';
 
+import TrangChuRoutes from './User/TrangChuRoutes'
+import UserDangNhapRoutes from './User/DangNhapRoutes'
+import DangKyRoutes from './User/DangKyRoutes'
+
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -16,6 +21,10 @@ const AppRoutes = () => {
       <Route path="admin/ca-nhan/*" element={<CaNhanRoutes />} />
       <Route path="admin/binh-luan/*" element={<BinhLuanRoutes />} />
       <Route path="admin/dang-nhap/" element={<DangNhapRoutes />} />
+
+      <Route path="/" element={<TrangChuRoutes />} />
+      <Route path="/dang-nhap" element={<UserDangNhapRoutes />} />
+      <Route path="/dang-ky" element={<DangKyRoutes />} />
     </Routes>
   );
 };
