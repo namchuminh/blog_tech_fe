@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import TaiKhoanServices from '../../services/User/TaiKhoanServices'
 import BaiVietServices from '../../services/User/BaiVietServices'
 import { toast } from 'react-toastify';
+import { Modal, Button, Form, Image } from 'react-bootstrap';
+
 
 function getShortDescription(content, length = 100) {
     // Loại bỏ các thẻ HTML
@@ -16,12 +18,26 @@ const TaiKhoan = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({});
     const [articles, setArticles] = useState([]);
+    const [followerCount, setFollowerCount] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const [show, setShow] = useState(false);
+    const [fullname, setFullname] = useState('');
+    const [bio, setBio] = useState('');
+    const [avatarUrl, setAvatarUrl] = useState('');
+    const [avatarPriview, setAvatarPriview] = useState('');
+    const [isChangePassword, setIsChangePassword] = useState(false);
+    const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const fetchUser = async () => {
         try {
             const response = await TaiKhoanServices.profile();
-            setUser(response.data);
+            setUser(response.data.user);
+            setFollowerCount(response.data.followerCount)
+            setFullname(response.data.user.fullname)
+            setAvatarPriview(`http://127.0.0.1:3001/${response.data.user.avatar_url}`)
+            setBio(response.data.user.bio)
         } catch (error) {
             console.error('Lỗi khi gọi API:', error);
         }
@@ -51,12 +67,65 @@ const TaiKhoan = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         toast.success('Đăng xuất thành công');
-        navigate('/dang-nhap'); 
+        navigate('/dang-nhap');
     }
 
-    const handlePageChange = (page) =>{
+    const handlePageChange = (page) => {
         fetchArticles(page)
     }
+
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setAvatarUrl(file);
+            setAvatarPriview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleNextChangePassword = () => {
+        setIsChangePassword(true);
+    }
+
+    const handleChangePassword = async () => {
+        const data = {
+            password, 
+            newPassword, 
+            confirmPassword
+        }
+        const changePassword = await TaiKhoanServices.changePassword(data);
+
+        if(changePassword.status == 200){            
+            toast.success(changePassword.data.message);
+            setShow(false);
+        }else{
+            toast.success(changePassword.response.data.message);
+        }
+
+        setPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+    };
+
+    const handleSaveInfo = async () => {
+        const formData = new FormData();
+        formData.append('fullname', fullname);
+        formData.append('bio', bio);
+        formData.append('avatar_url', avatarUrl);
+
+        const update = await TaiKhoanServices.update(formData);
+
+        if (update.status == 200) {
+            toast.success(update.data.message);
+            fetchUser();
+        } else {
+            toast.success(update.response.data.message);
+        }
+        setShow(false);
+    };
+
+    const handleBackToInfo = () => {
+        setIsChangePassword(false);
+    };
 
     return (
         <>
@@ -93,7 +162,13 @@ const TaiKhoan = () => {
                                     <div className="author-description">
                                         {user.bio == null ? "Chưa có thông tin giới thiệu." : user.bio}
                                     </div>
-                                    <Link to="/tai-khoan/cap-nhat" className="author-bio-link" style={{ textTransform: 'unset' }}>
+                                    <Link to="#" className="author-bio-link" style={{ textTransform: 'unset' }}>
+                                        <span className="mr-5 font-x-small">
+                                            <i className="fa-solid fa-rss"></i>
+                                        </span>
+                                        {followerCount} người theo dõi
+                                    </Link>
+                                    <Link to="#" onClick={() => setShow(true)} className="author-bio-link" style={{ textTransform: 'unset' }}>
                                         <span className="mr-5 font-x-small">
                                             <i className="fa-solid fa-user-pen"></i>
                                         </span>
@@ -108,11 +183,11 @@ const TaiKhoan = () => {
                                 </div>
                             </div>
                             {
-                                articles.length == 0 
-                                ?
-                                <h2>Chưa có bài viết</h2>
-                                :
-                                <h2>Danh sách bài viết</h2>
+                                articles.length == 0
+                                    ?
+                                    <h2>Chưa có bài viết</h2>
+                                    :
+                                    <h2>Danh sách bài viết</h2>
                             }
                             <hr className="wp-block-separator is-style-wide" />
                             <div className="latest-post mb-50">
@@ -126,7 +201,7 @@ const TaiKhoan = () => {
                                                         <i className="mdi mdi-flash-on" />
                                                     </span>
                                                     <Link to={`/bai-viet/${article.slug}`}>
-                                                        <img style={{ height: '380px', width: '100%'}} src={`http://127.0.0.1:3001/${article.image_url}`} alt="post-slider" />
+                                                        <img style={{ height: '380px', width: '100%' }} src={`http://127.0.0.1:3001/${article.image_url}`} alt="post-slider" />
                                                     </Link>
                                                 </div>
                                                 <div className="pr-10 pl-10">
@@ -214,27 +289,119 @@ const TaiKhoan = () => {
                                 </div>
                             </div>
                             {
-                                articles.length != 0 
-                                ?
-                                <div className="pagination-area mb-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul className="pagination justify-content-start">
-                                            {Array.from({ length: totalPages }, (_, index) => (
-                                                <li key={index} className="page-item active">
-                                                    <a className="page-link" onClick={() => handlePageChange(index + 1)}>
-                                                        {index + 1}
-                                                    </a>
-                                                </li>
-                                            ))}                                      
-                                        </ul>
-                                    </nav>
-                                </div>
-                                :
-                                null
+                                articles.length != 0
+                                    ?
+                                    <div className="pagination-area mb-30">
+                                        <nav aria-label="Page navigation example">
+                                            <ul className="pagination justify-content-start">
+                                                {Array.from({ length: totalPages }, (_, index) => (
+                                                    <li key={index} className="page-item active">
+                                                        <a className="page-link" onClick={() => handlePageChange(index + 1)}>
+                                                            {index + 1}
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                    :
+                                    null
                             }
                         </div>
                     </div>
                 </div>
+                <Modal show={show} onHide={() => setShow(false)} size='lg'>
+                    <Modal.Header>
+                        <Modal.Title>{isChangePassword ? 'Đổi Mật Khẩu' : 'Cập Nhật Thông Tin'}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {isChangePassword ? (
+                            <Form>
+                                <Form.Group controlId="oldPassword" className="mb-3">
+                                    <Form.Label>Mật khẩu cũ</Form.Label>
+                                    <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu cũ" />
+                                </Form.Group>
+                                <Form.Group controlId="newPassword" className="mb-3">
+                                    <Form.Label>Mật khẩu mới</Form.Label>
+                                    <Form.Control type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Nhập mật khẩu mới" />
+                                </Form.Group>
+                                <Form.Group controlId="confirmPassword" className="mb-3">
+                                    <Form.Label>Xác nhận mật khẩu mới</Form.Label>
+                                    <Form.Control type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Xác nhận mật khẩu mới" />
+                                </Form.Group>
+                            </Form>
+                        ) : (
+                            <Form>
+                                <div className="text-center mb-4">
+                                    <Image
+                                        src={avatarPriview}
+                                        roundedCircle
+                                        alt="Avatar"
+                                        className="avatar-preview"
+                                    />
+                                    <Form.Group controlId="avatarUrl" className="mt-3">
+                                        <Form.Label className='btn-upload'>
+                                            <i className="fa-solid fa-camera"></i> Chọn ảnh
+                                            <Form.Control
+                                                type="file"
+                                                className="d-none"
+                                                onChange={handleAvatarChange}
+                                            />
+                                        </Form.Label>
+                                    </Form.Group>
+                                </div>
+
+                                <Form.Group controlId="fullname" className="mb-3">
+                                    <Form.Label>Họ và tên</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Nhập họ và tên"
+                                        value={fullname}
+                                        onChange={(e) => setFullname(e.target.value)}
+                                        required
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="bio" className="mb-3">
+                                    <Form.Label>Tiểu sử</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        placeholder="Nhập tiểu sử ngắn gọn"
+                                        value={bio ?? ''}
+                                        onChange={(e) => setBio(e.target.value)}
+                                        required
+                                    />
+                                </Form.Group>
+                            </Form>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        {!isChangePassword && (
+                            <>
+                                <Button className="btn-profile-update" onClick={handleNextChangePassword}>
+                                    Đổi Mật Khẩu
+                                </Button>
+                                <Button
+                                    className="btn-profile-update"
+                                    onClick={handleSaveInfo}
+                                >
+                                    Lưu Thông Tin
+                                </Button>
+                            </>
+                        )}
+                        {isChangePassword && (
+                            <>
+                                <Button className="btn-profile-update" onClick={handleBackToInfo}>
+                                    Quay lại
+                                </Button>
+                                <Button className="btn-profile-update" onClick={handleChangePassword}>
+                                    Đổi Mật Khẩu
+                                </Button>
+                            </>
+                        )}
+                    </Modal.Footer>
+                </Modal>
             </main>
         </>
     )

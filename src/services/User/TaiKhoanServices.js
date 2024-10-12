@@ -18,6 +18,28 @@ const TaiKhoanServices = {
             throw error;
         }
     },
+
+    update: async (data) => {
+        try {
+            const response = await axiosInstance.put('/users', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    changePassword: async (data) => {
+        try {
+            const response = await axiosInstance.patch(`/users/changePassword`, data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
 export default TaiKhoanServices;

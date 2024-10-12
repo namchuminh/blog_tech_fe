@@ -11,6 +11,7 @@ import TrangChuRoutes from './User/TrangChuRoutes'
 import UserDangNhapRoutes from './User/DangNhapRoutes'
 import DangKyRoutes from './User/DangKyRoutes'
 import TaiKhoanRoutes from './User/TaiKhoanRoutes'
+import UserBaiVietRoutes from './User/BaiVietRoutes'
 
 
 const AppRoutes = () => {
@@ -27,6 +28,7 @@ const AppRoutes = () => {
       <Route path="/dang-nhap" element={<UserDangNhapRoutes />} />
       <Route path="/dang-ky" element={<DangKyRoutes />} />
       <Route path="/tai-khoan/*" element={<TaiKhoanRoutes />} />
+      <Route path="/bai-viet/*" element={<UserBaiVietRoutes />} />
     </Routes>
   );
 };

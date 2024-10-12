@@ -17,11 +17,13 @@ const TrangChu = () => {
     const [lastComments, setLastComments] = useState([])
     const [topInteracts, setTopInteracts] = useState([])
     const [newUsers, setNewUsers] = useState([])
+    const [totalPages, setTotalPages] = useState(1);
 
-    const fetchArticles = async () => {
+    const fetchArticles = async (page = 1) => {
         try {
-            const response = await TrangChuServices.getListArticles();
+            const response = await TrangChuServices.getListArticles(page);
             setArticles(response.data.articles);
+            setTotalPages(response.data.totalPages)
         } catch (error) {
             console.error('Lỗi khi gọi API:', error);
         }
@@ -90,6 +92,10 @@ const TrangChu = () => {
         fetchNewUsers();
         fetchTopCategories();
     }, []);
+
+    const handlePageChange = (page) => {
+        fetchArticles(page);
+    }
 
     return (
         <>
@@ -412,6 +418,19 @@ const TrangChu = () => {
                                                         </div>
                                                     </article>
                                                 ))}
+                                            </div>
+                                            <div className="pagination-area mb-30">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul className="pagination justify-content-start">
+                                                        {Array.from({ length: totalPages }, (_, index) => (
+                                                            <li key={index} className="page-item active">
+                                                                <a className="page-link" onClick={() => handlePageChange(index + 1)}>
+                                                                    {index + 1}
+                                                                </a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </nav>
                                             </div>
                                         </div>
                                     </div>

@@ -165,7 +165,7 @@ const Header = () => {
                                         </Link>
                                         <Link
                                             className="red-tooltip text-primary"
-                                            to="/tai-khoan"
+                                            to={ !localStorage.getItem('token') ? '/dang-nhap' : '/tai-khoan' }
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title=""
