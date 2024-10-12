@@ -106,7 +106,8 @@ const TaiKhoan = () => {
         setConfirmPassword('');
     };
 
-    const handleSaveInfo = async () => {
+    const handleSaveInfo = async (e) => {
+        e.preventDefault();
         const formData = new FormData();
         formData.append('fullname', fullname);
         formData.append('bio', bio);
@@ -273,6 +274,11 @@ const TaiKhoan = () => {
                                                             <span className="post-by">
                                                                 Đăng bởi <Link to="#">{user.fullname}</Link>
                                                             </span>
+                                                            <Link to={`/bai-viet/${article.slug}`}>
+                                                                <span className="mr-10">
+                                                                    <i className="fa-solid fa-angles-right"></i> Xem Thêm 
+                                                                </span>
+                                                            </Link>
                                                         </div>
                                                     </div>
                                                     <div className="float-right">
@@ -285,7 +291,6 @@ const TaiKhoan = () => {
                                                 </div>
                                             </article>
                                     ))}
-
                                 </div>
                             </div>
                             {
@@ -384,7 +389,7 @@ const TaiKhoan = () => {
                                 </Button>
                                 <Button
                                     className="btn-profile-update"
-                                    onClick={handleSaveInfo}
+                                    onClick={(e) => handleSaveInfo(e)}
                                 >
                                     Lưu Thông Tin
                                 </Button>

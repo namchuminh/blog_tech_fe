@@ -39,6 +39,15 @@ const TaiKhoanServices = {
         } catch (error) {
             throw error;
         }
+    },
+
+    getArticlesByUsername: async (username, page) => {
+        try {
+            const response = await axiosInstance.get(`/others/articles_username/${username}/?page=${page}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

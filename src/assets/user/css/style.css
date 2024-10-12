@@ -592,6 +592,9 @@ pre{border:1px solid #eee;font-size:1em;line-height:1.8;margin:15px 0;max-width:
 	background-color: #dc3545;
 }
 
+.btn-profile-update:active{
+	background-color: #dc3545;
+}
 
 .avatar-preview {
     width: 120px;
@@ -608,4 +611,7 @@ pre{border:1px solid #eee;font-size:1em;line-height:1.8;margin:15px 0;max-width:
 	border-radius: 5px;
 }
 
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle{
+	background-color: #dc3545;
+}
 
