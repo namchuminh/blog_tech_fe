@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
 import TrangChuServices from '../../services/User/TrangChuServices'
+import { Link } from 'react-router-dom';
+
+function getShortDescription(content, length = 100) {
+    // Loại bỏ các thẻ HTML
+    const plainText = content.replace(/<[^>]+>/g, '');
+    // Lấy một số ký tự đầu tiên làm mô tả ngắn
+    return plainText.length > length ? plainText.substring(0, length) + '...' : plainText;
+}
 
 const TrangChu = () => {
     const [topCategories, setTopCategories] = useState([])
@@ -183,19 +191,19 @@ const TrangChu = () => {
                                                                 <span className="top-right-icon background10">
                                                                     <i className="mdi mdi-share" />
                                                                 </span>
-                                                                <a href="single.html">
+                                                                <Link to={`/chuyen-muc/${category.slug}`}>
                                                                     <img
                                                                         className="border-radius-10"
                                                                         src={`http://127.0.0.1:3001/${category.image_url}`}
                                                                         alt="post-slider"
                                                                         style={{ height: '250px', width: '100%'}}
                                                                     />
-                                                                </a>
+                                                                </Link>
                                                             </div>
                                                             <h5 className="post-title pr-5 pl-5 mb-10 mt-15 text-limit-2-row">
-                                                                <a href="single.html">
+                                                                <Link to={`/chuyen-muc/${category.slug}`}>
                                                                     {category.name}
-                                                                </a>
+                                                                </Link>
                                                             </h5>
                                                             <div className="entry-meta meta-1 font-x-small mt-10 pr-5 pl-5 text-muted">
                                                                 <span>
@@ -229,15 +237,15 @@ const TrangChu = () => {
                                                         <li key={index} className="mb-20">
                                                             <div className="d-flex">
                                                                 <div className="post-thumb d-flex mr-15 border-radius-5 img-hover-scale">
-                                                                    <a className="color-white" href="single.html">
-                                                                        <img style={{ height: '50px', width: '50px' }} src={`http://127.0.0.1:3001/${article.image_url}`} alt="" />
-                                                                    </a>
+                                                                    <Link className="color-white" to={`/nguoi-dung/${article.username}`}>
+                                                                        <img style={{ height: '50px', width: '50px' }} src={`http://127.0.0.1:3001/${article.avatar_url}`} alt="" />
+                                                                    </Link>
                                                                 </div>
                                                                 <div className="post-content media-body">
                                                                     <h6 className="post-title mb-10 text-limit-2-row">
-                                                                        <a href="single.html">
+                                                                        <Link to={`/bai-viet/${article.slug}`}>
                                                                             {article.title}
-                                                                        </a>
+                                                                        </Link>
                                                                     </h6>
                                                                 </div>
                                                             </div>
@@ -255,17 +263,17 @@ const TrangChu = () => {
                                                     </h5>
                                                 </div>
                                                 {newUsers.map((user, index) => (
-                                                    <a
+                                                    <Link
                                                         className="red-tooltip"
-                                                        href="#"
+                                                        to={`/nguoi-dung/${user.username}`}
                                                         data-toggle="tooltip"
                                                         data-placement="top"
-                                                        title=""
+                                                        title={user.fullname}
                                                         data-original-title="Emma - 1034 posts"
                                                         key={index}
                                                     >
                                                         <img src={`http://127.0.0.1:3001/${user.avatar_url}`} alt="" />
-                                                    </a>
+                                                    </Link>
                                                 ))} 
                                             </div>
                                         </div>
@@ -313,21 +321,21 @@ const TrangChu = () => {
                                                         <li key={index} className="mb-30 wow fadeIn animated">
                                                             <div className="d-flex">
                                                                 <div className="post-thumb d-flex mr-15 border-radius-5 img-hover-scale">
-                                                                    <a className="color-white" href="single.html">
+                                                                    <Link className="color-white" to={`/bai-viet/${article.slug}`}>
                                                                         <img style={{ height: '150px' }} src={`http://127.0.0.1:3001/${article.image_url}`} alt="" />
-                                                                    </a>
+                                                                    </Link>
                                                                 </div>
                                                                 <div className="post-content media-body">
                                                                     <h6 className="post-title mb-10 text-limit-2-row">
-                                                                        <a href="single.html">
+                                                                        <Link to={`/bai-viet/${article.slug}`}>
                                                                             {article.title}
-                                                                        </a>
+                                                                        </Link>
                                                                     </h6>
                                                                     <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase">
                                                                         <span className="post-by">
-                                                                            By <a href="author.html">K. Marry</a>
+                                                                            Bởi <Link to={`/nguoi-dung/${article.username}`}>{article.fullname}</Link>
                                                                         </span>
-                                                                        <span className="post-on">{article.createdAt}</span>
+                                                                        <span className="post-on">{new Date(article.createdAt).toLocaleDateString('vi-VN')}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -362,38 +370,43 @@ const TrangChu = () => {
                                                     <article key={index} className="p-10 background-white border-radius-10 mb-30 wow fadeIn animated">
                                                         <div className="d-flex">
                                                             <div className="post-thumb d-flex mr-15 border-radius-15 img-hover-scale">
-                                                                <a className="color-white" href="single.html">
+                                                                <Link className="color-white" to={`/bai-viet/${article.slug}`}>
                                                                     <img
+                                                                        style={{ width: '200px', height: '200px'}}
                                                                         className="border-radius-15"
                                                                         src={`http://127.0.0.1:3001/${article.image_url}`}
                                                                         alt={article.title}
                                                                     />
-                                                                </a>
+                                                                </Link>
                                                             </div>
                                                             <div className="post-content media-body">
                                                                 <div className="entry-meta mb-15 mt-10">
-                                                                    <a
+                                                                    <Link
                                                                         className="entry-meta meta-2"
-                                                                        href="category.html"
+                                                                        to="#"
                                                                     >
                                                                         <span className="post-in text-danger font-x-small">
-                                                                            {article.createdAt}
+                                                                            {new Date(article.createdAt).toLocaleDateString('vi-VN')}
                                                                         </span>
-                                                                    </a>
+                                                                    </Link>
                                                                 </div>
                                                                 <h5 className="post-title mb-15 text-limit-2-row">
-                                                                    <a href="single.html">
+                                                                    <Link to={`/bai-viet/${article.slug}`}>
                                                                         {article.title}
-                                                                    </a>
+                                                                    </Link>
                                                                 </h5>
+                                                                <p className="post-exerpt font-medium text-muted mb-30 d-none d-lg-block">
+                                                                    {
+                                                                        getShortDescription(article.content, 150)
+                                                                    }
+                                                                </p>
                                                                 <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase">
                                                                     <span className="post-by">
-                                                                        By <a href="author.html">Sean Boynton</a>
+                                                                        Đăng bởi <Link to={`/nguoi-dung`}>{article.user.fullname}</Link>
                                                                     </span>
                                                                     <span className="post-on">
-                                                                        {article.createdAt}
+                                                                        {article.views.length == 0 ? 0 : article.views[0].view_count} lượt xem
                                                                     </span>
-                                                                    <span className="time-reading">12 mins read</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -413,22 +426,22 @@ const TrangChu = () => {
                                                 {mostPopular.map((article, index) => (
                                                     <article key={index} className="bg-white border-radius-15 mb-30 p-10 wow fadeIn animated">
                                                         <div className="post-thumb d-flex mb-15 border-radius-15 img-hover-scale">
-                                                            <a href="single.html" style={{ width: '100%' }}>
+                                                            <Link to={`/bai-viet/${article.slug}`} style={{ width: '100%' }}>
                                                                 <img style={{ height: '250px', width: '100%' }} src={`http://127.0.0.1:3001/${article.image_url}`} />
-                                                            </a>
+                                                            </Link>
                                                         </div>
                                                         <div className="pl-10 pr-10">
                                                             <h5 className="post-title mb-15">
-                                                                <a href="single.html">
+                                                                <Link to={`/bai-viet/${article.slug}`}>
                                                                     {article.title}
-                                                                </a>
+                                                                </Link>
                                                             </h5>
                                                             <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase mb-10">
                                                                 <span className="post-in">
-                                                                    In <a href="category.html">Global</a>
+                                                                    TOP {index + 1}
                                                                 </span>
                                                                 <span className="post-by">
-                                                                    By <a href="author.html">K. Marry</a>
+                                                                    Bởi <Link to={`/nguoi-dung/${article.username}`}>{article.fullname}</Link>
                                                                 </span>
                                                                 <span className="post-on">{article.total_views} lượt xem</span>
                                                             </div>
@@ -447,29 +460,28 @@ const TrangChu = () => {
                                                 {lastComments.map((comment, index) => (
                                                     <div className="last-comment mb-20 d-flex wow fadeIn animated">
                                                         <span className="item-count vertical-align">
-                                                            <a
+                                                            <Link
                                                                 className="red-tooltip author-avatar"
-                                                                href="#"
+                                                                to={`/nguoi-dung/${comment.user.username}`}
                                                                 data-toggle="tooltip"
                                                                 data-placement="top"
-                                                                title=""
-                                                                data-original-title="Azumi - 985 posts"
+                                                                title={comment.user.fullname}
                                                             >
                                                                 <img
                                                                     src={`http://127.0.0.1:3001/${comment.user.avatar_url}`}
                                                                     alt=""
                                                                 />
-                                                            </a>
+                                                            </Link>
                                                         </span>
                                                         <div className="alith_post_title_small">
                                                             <p className="font-medium mb-10">
-                                                                <a href="single.html">
+                                                                <Link to={`/bai-viet/${comment.article.slug}`}>
                                                                     {comment.content}
-                                                                </a>
+                                                                </Link>
                                                             </p>
                                                             <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase mb-10">
                                                                 <span className="post-by">
-                                                                    Bởi <a href="author.html">{comment.user.fullname}</a>
+                                                                    Bởi <Link to={`/nguoi-dung/${comment.user.username}`}>{comment.user.fullname}</Link>
                                                                 </span>
                                                             </div>
                                                         </div>

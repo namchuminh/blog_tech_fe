@@ -100,26 +100,26 @@ const Header = () => {
                                             <li>
                                                 <Link to="/">
                                                     <span className="mr-15">
-                                                        <ion-icon name="mail-unread-outline" />
+                                                        <i className="fa-solid fa-house"></i>
                                                     </span>
                                                     TRANG CHỦ
                                                 </Link>
                                             </li>
                                             <li>
-                                                <a href="category-metro.html">
+                                                <Link to="/xu-huong">
                                                     <span className="mr-15">
-                                                        <ion-icon name="film-outline" />
+                                                        <i className="fa-solid fa-arrow-trend-up"></i>
                                                     </span>
-                                                    Video
-                                                </a>
+                                                    XU HƯỚNG
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a href="contact.html">
+                                                <Link to="/bai-viet">
                                                     <span className="mr-15">
-                                                        <ion-icon name="mail-unread-outline" />
+                                                        <i className="fa-solid fa-fire"></i>
                                                     </span>
-                                                    Contact
-                                                </a>
+                                                    TIN MỚI
+                                                </Link>
                                             </li>
                                         </ul>
                                     </nav>

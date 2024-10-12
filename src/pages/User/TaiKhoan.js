@@ -152,11 +152,11 @@ const TaiKhoan = () => {
                                                             </span>
                                                         </div>
                                                         <div className="float-right">
-                                                            <Link to={`/bai-viet/${article.slug}`}>
+                                                            <Link to={`/chinh-sua/${article.slug}`}>
                                                                 <span className="mr-10">
-                                                                    <i className="fa fa-thumbtack" aria-hidden="true" />
+                                                                    <i className="fa-regular fa-pen-to-square"></i>
                                                                 </span>
-                                                                Đọc Ngay
+                                                                Chỉnh Sửa
                                                             </Link>
                                                         </div>
                                                     </div>
@@ -166,23 +166,23 @@ const TaiKhoan = () => {
                                             <article key={index} className="p-10 background-white border-radius-10 mb-30 wow fadeIn animated">
                                                 <div className="d-md-flex d-block">
                                                     <div className="post-thumb post-thumb-big d-flex mr-15 border-radius-15 img-hover-scale">
-                                                        <a className="color-white" href="single.html">
+                                                        <Link className="color-white" to={`/bai-viet/${article.slug}`}>
                                                             <img
                                                                 className="border-radius-15"
                                                                 src={`http://127.0.0.1:3001/${article.image_url}`}
                                                                 alt=""
                                                             />
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                     <div className="post-content media-body">
                                                         <div className="entry-meta mb-15 mt-10">
-                                                            <a className="entry-meta meta-2" href="category.html">
+                                                            <Link className="entry-meta meta-2" to="#">
                                                                 <span className="post-in text-danger font-x-small">
                                                                     {
                                                                         new Date(article.createdAt).toLocaleDateString('vi-VN')
                                                                     }
                                                                 </span>
-                                                            </a>
+                                                            </Link>
                                                         </div>
                                                         <h5 className="post-title mb-15 text-limit-2-row">
                                                             <Link to={`/bai-viet/${article.slug}`}>
@@ -199,6 +199,13 @@ const TaiKhoan = () => {
                                                                 Đăng bởi <Link to="#">{user.fullname}</Link>
                                                             </span>
                                                         </div>
+                                                    </div>
+                                                    <div className="float-right">
+                                                        <Link to={`/chinh-sua/${article.slug}`}>
+                                                            <span className="mr-10">
+                                                                <i className="fa-regular fa-pen-to-square"></i>
+                                                            </span>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             </article>
