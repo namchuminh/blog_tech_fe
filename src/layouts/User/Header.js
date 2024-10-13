@@ -118,7 +118,7 @@ const Header = () => {
                                                     <span className="mr-15">
                                                         <i className="fa-solid fa-fire"></i>
                                                     </span>
-                                                    TIN MỚI
+                                                    THEO DÕI
                                                 </Link>
                                             </li>
                                         </ul>

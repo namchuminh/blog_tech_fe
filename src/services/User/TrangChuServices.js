@@ -72,6 +72,15 @@ const TrangChuServices = {
             throw error;
         }
     },
+
+    getTopMonth: async (page) => {
+        try {
+            const response = await axiosInstance.get(`/others/top_month/?page=${page}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default TrangChuServices;

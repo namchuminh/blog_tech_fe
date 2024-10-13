@@ -192,7 +192,7 @@ const TrangChu = () => {
                                             <div className="block-tab-item post-module-1 post-module-4">
                                                 <div className="row">
                                                     {topCategories.map((category, index) => (
-                                                        <div index={index} className="slider-single col-md-6 mb-30">
+                                                        <div key={index} className="slider-single col-md-6 mb-30">
                                                             <div className="img-hover-scale border-radius-10">
                                                                 <span className="top-right-icon background10">
                                                                     <i className="mdi mdi-share" />
@@ -408,7 +408,7 @@ const TrangChu = () => {
                                                                 </p>
                                                                 <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase">
                                                                     <span className="post-by">
-                                                                        Đăng bởi <Link to={`/nguoi-dung`}>{article.user.fullname}</Link>
+                                                                        Đăng bởi <Link to={`/nguoi-dung/${article.user.username}`}>{article.user.fullname}</Link>
                                                                     </span>
                                                                     <span className="post-on">
                                                                         {article.views.length == 0 ? 0 : article.views[0].view_count} lượt xem
@@ -477,7 +477,7 @@ const TrangChu = () => {
                                             </div>
                                             <div className="post-block-list post-module-6">
                                                 {lastComments.map((comment, index) => (
-                                                    <div className="last-comment mb-20 d-flex wow fadeIn animated">
+                                                    <div key={index} className="last-comment mb-20 d-flex wow fadeIn animated">
                                                         <span className="item-count vertical-align">
                                                             <Link
                                                                 className="red-tooltip author-avatar"
