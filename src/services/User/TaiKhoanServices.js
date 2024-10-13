@@ -48,7 +48,25 @@ const TaiKhoanServices = {
         } catch (error) {
             throw error;
         }
-    }
+    },
+
+    checkFollowed: async (username) => {
+        try {
+            const response = await axiosInstance.get(`/followers/${username}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    follow: async (username) => {
+        try {
+            const response = await axiosInstance.post(`/followers/${username}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default TaiKhoanServices;

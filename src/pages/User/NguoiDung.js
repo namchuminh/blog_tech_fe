@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import TaiKhoanServices from '../../services/User/TaiKhoanServices'
+import { toast } from 'react-toastify';
 
 function getShortDescription(content, length = 100) {
     // Loại bỏ các thẻ HTML
@@ -15,6 +16,7 @@ const NguoiDung = () => {
     const [followerCount, setFollowerCount] = useState(0);
     const [articles, setArticles] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
+    const [isFollower, setIsFollower] = useState(false);
 
     const fetchUser = async () => {
         try {
@@ -36,15 +38,43 @@ const NguoiDung = () => {
         }
     }
 
+    const fetchFollowed = async () => {
+        try {
+            const response = await TaiKhoanServices.checkFollowed(username);
+            setIsFollower(response.data.isFollowing);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    }
+
+
     const handlePageChange = (page) => {
         fetchArticles(page)
     }
 
     useEffect(() => {
         window.scroll(0, 0);
+        if (localStorage.getItem('token')) {
+            fetchFollowed();
+        }
+
         fetchUser();
         fetchArticles();
     }, []);
+     
+    const handelFollow = async () => {
+        if (!localStorage.getItem('token')) {
+            toast.error("Vui lòng đăng nhập để theo dõi!");
+        }else{
+            try {
+                const response = await TaiKhoanServices.follow(username);
+                setIsFollower(!isFollower)
+                isFollower == true ? setFollowerCount(followerCount - 1) : setFollowerCount(followerCount + 1);
+            } catch (error) {
+                console.error('Lỗi khi gọi API:', error);
+            }
+        }
+    }
 
     return (
         <>
@@ -87,11 +117,23 @@ const NguoiDung = () => {
                                         </span>
                                         {followerCount} người theo dõi
                                     </Link>
-                                    <Link to="#" className="author-bio-link">
-                                        <span className="mr-5 font-x-small">
-                                            <i className="fa-solid fa-user-plus"></i>
-                                        </span>
-                                        Follow
+                                    <Link to="#" className="author-bio-link" onClick={handelFollow}>
+                                        {
+                                            isFollower == true ? 
+                                                <>
+                                                    <span className="mr-5 font-x-small">
+                                                        <i className="fa-solid fa-user-minus"></i> 
+                                                    </span>
+                                                    Hủy Follow
+                                                </>
+                                            :
+                                                <>
+                                                    <span className="mr-5 font-x-small">
+                                                        <i className="fa-solid fa-user-plus"></i> 
+                                                    </span>
+                                                    Follow
+                                                </>
+                                        }
                                     </Link>
                                     <div className="author-social">
                                         <ul className="author-social-icons">
