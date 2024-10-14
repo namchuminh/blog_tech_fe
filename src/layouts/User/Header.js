@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchTerm.trim() !== '') {
+            navigate(`/tim-kiem?s=${encodeURIComponent(searchTerm)}`);
+        }
+    };
+
     return (
         <>
             <header className="main-header header-style-2 mb-40" style={{ marginLeft: 0 }}>
@@ -125,16 +136,18 @@ const Header = () => {
                                     </nav>
                                 </div>
                                 <div className="off-canvas-toggle-cover">
-                                    <form
+                                        <form
                                             action="#"
                                             method="get"
                                             className="search-form d-lg-inline float-left position-relative d-none mr-20"
+                                            onSubmit={handleSearch}
                                         >
                                             <input
                                                 type="text"
                                                 className="search_field"
                                                 placeholder="Nhập tên bài viết"
-                                                defaultValue=""
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
                                                 name="s"
                                             />
                                             <span className="search-icon">

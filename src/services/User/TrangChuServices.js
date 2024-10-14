@@ -10,9 +10,9 @@ const TrangChuServices = {
         }
     },
 
-    getListArticles: async (page) => {
+    getListArticles: async (page, search = "") => {
         try {
-            const response = await axiosInstance.get(`/others/list_articles?page=${page}`);
+            const response = await axiosInstance.get(`/others/list_articles?page=${page}&search=${search}`);
             return response;
         } catch (error) {
             throw error;
