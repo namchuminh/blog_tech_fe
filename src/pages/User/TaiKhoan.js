@@ -74,6 +74,10 @@ const TaiKhoan = () => {
 
     const handlePageChange = (page) => {
         fetchArticles(page)
+        const element = document.getElementById('list-articles-new');
+        if (element) {
+            element.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
     }
 
     const handleAvatarChange = (e) => {
@@ -190,7 +194,7 @@ const TaiKhoan = () => {
                                     ?
                                     <h2>Chưa có bài viết</h2>
                                     :
-                                    <h2>Danh sách bài viết</h2>
+                                    <h2 id='list-articles-new'>Danh sách bài viết</h2>
                             }
                             <hr className="wp-block-separator is-style-wide" />
                             <div className="latest-post mb-50">

@@ -95,6 +95,10 @@ const TrangChu = () => {
 
     const handlePageChange = (page) => {
         fetchArticles(page);
+        const element = document.getElementById('list-articles-new');
+        if (element) {
+            element.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
     }
 
     return (
@@ -358,7 +362,7 @@ const TrangChu = () => {
                                             <div className="widget-header position-relative mb-30">
                                                 <div className="row">
                                                     <div className="col-7">
-                                                        <h4 className="widget-title mb-0">
+                                                        <h4 className="widget-title mb-0" id='list-articles-new'>
                                                             Bài Viết <span>Mới</span>
                                                         </h4>
                                                     </div>

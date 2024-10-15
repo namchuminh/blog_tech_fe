@@ -76,7 +76,6 @@ const ChinhSua = () => {
             }));
             setSelectedCategories(selectedCategoriesDefault);
         }else{
-            toast.error(detail.response.data.message);
             navigate('/tai-khoan'); 
         }
     }

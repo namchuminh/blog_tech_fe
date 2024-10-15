@@ -62,6 +62,7 @@ const XuHuong = () => {
 
     const handlePageChange = (page) => {
         fetchArticles(page);
+        window.scroll(0,0); 
     }
 
     return (
