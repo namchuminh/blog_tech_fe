@@ -62,6 +62,7 @@ const TaiKhoan = () => {
     useEffect(() => {
         fetchUser();
         fetchArticles();
+        window.scroll(0,0)
     }, []);
 
     const handelLogout = (e) => {

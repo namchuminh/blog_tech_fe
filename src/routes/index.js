@@ -37,7 +37,7 @@ const AppRoutes = () => {
       <Route path="/nguoi-dung/*" element={<UserNguoiDungRoutes />} />
       <Route path="/xu-huong/*" element={<XuHuongRoutes />} />
       <Route path="/tim-kiem/*" element={<TimKiemRoutes />} />
-      <Route path="/viet-bai" element={<VietBaiRoutes />} />
+      <Route path="/viet-bai/*" element={<VietBaiRoutes />} />
       <Route path="/chinh-sua/*" element={<ChinhSuaRoutes />} />
     </Routes>
   );
