@@ -57,10 +57,12 @@ const TaiKhoan = () => {
         if (!localStorage.getItem('token')) {
             navigate('/dang-nhap');
         }
+    }, []);
 
+    useEffect(() => {
         fetchUser();
         fetchArticles();
-    }, [navigate]);
+    }, []);
 
     const handelLogout = (e) => {
         e.preventDefault();
@@ -228,7 +230,7 @@ const TaiKhoan = () => {
                                                             </span>
                                                         </div>
                                                         <div className="float-right">
-                                                            <Link to={`/chinh-sua/${article.slug}`}>
+                                                            <Link to={`/chinh-sua/${article.article_id}`}>
                                                                 <span className="mr-10">
                                                                     <i className="fa-regular fa-pen-to-square"></i>
                                                                 </span>
@@ -282,7 +284,7 @@ const TaiKhoan = () => {
                                                         </div>
                                                     </div>
                                                     <div className="float-right">
-                                                        <Link to={`/chinh-sua/${article.slug}`}>
+                                                        <Link to={`/chinh-sua/${article.article_id}`}>
                                                             <span className="mr-10">
                                                                 <i className="fa-regular fa-pen-to-square"></i>
                                                             </span>
