@@ -10,14 +10,15 @@ function getShortDescription(content, length = 100) {
 }
 
 const TrangChu = () => {
-    const [topCategories, setTopCategories] = useState([])
-    const [articles, setArticles] = useState([])
-    const [topTrendings, setTopTrendings] = useState([])
-    const [mostPopular, setMostPopular] = useState([])
-    const [lastComments, setLastComments] = useState([])
-    const [topInteracts, setTopInteracts] = useState([])
-    const [newUsers, setNewUsers] = useState([])
+    const [topCategories, setTopCategories] = useState([]);
+    const [articles, setArticles] = useState([]);
+    const [topTrendings, setTopTrendings] = useState([]);
+    const [mostPopular, setMostPopular] = useState([]);
+    const [lastComments, setLastComments] = useState([]);
+    const [topInteracts, setTopInteracts] = useState([]);
+    const [newUsers, setNewUsers] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
+    const [topPopularToday, setTopPopularToday] = useState({});
 
     const fetchArticles = async (page = 1) => {
         try {
@@ -83,6 +84,16 @@ const TrangChu = () => {
         }
     }
 
+    const fetchTopPopularToday = async () => {
+        try {
+            const response = await TrangChuServices.getTopPopularToday();
+            setTopPopularToday(response.data.article);
+            console.log(response.data.article)
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    }
+
     useEffect(() => {
         fetchArticles();
         fetchTopTrendings();
@@ -91,6 +102,7 @@ const TrangChu = () => {
         fetchTopInteracts();
         fetchNewUsers();
         fetchTopCategories();
+        fetchTopPopularToday();
     }, []);
 
     const handlePageChange = (page) => {
@@ -122,19 +134,18 @@ const TrangChu = () => {
                                                             <span className="top-right-icon bg-dark">
                                                                 <i className="mdi mdi-camera-alt" />
                                                             </span>
-                                                            <a href="single.html">
+                                                            <Link to={`/bai-viet/${topPopularToday.slug}`}>
                                                                 <img
-                                                                    src="assets/imgs/news-8.jpg"
+                                                                    src={`http://127.0.0.1:3001/${topPopularToday.image_url}`}
                                                                     alt="post-slider"
                                                                 />
-                                                            </a>
+                                                            </Link>
                                                         </div>
                                                         <div className="pr-10 pl-10">
                                                             <h4 className="post-title mb-20">
-                                                                <a href="#">
-                                                                    ‘People Are Getting in Planes’: The Travel
-                                                                    Business Is Picking Up
-                                                                </a>
+                                                                <Link to={`/bai-viet/${topPopularToday.slug}`}>
+                                                                    {topPopularToday.title}
+                                                                </Link>
                                                             </h4>
                                                             <div className="mb-20 overflow-hidden">
                                                                 <div className="entry-meta meta-2 float-left">
@@ -144,30 +155,30 @@ const TrangChu = () => {
                                                                         tabIndex={0}
                                                                     >
                                                                         <img
-                                                                            src="assets/imgs/authors/author.png"
+                                                                            src={`http://127.0.0.1:3001/${topPopularToday.avatar_url}`}
                                                                             alt=""
                                                                         />
                                                                     </a>
-                                                                    <a href="author.html" tabIndex={0}>
+                                                                    <Link to={`/nguoi-dung/${topPopularToday.username}`} tabIndex={0}>
                                                                         <span className="author-name text-grey">
-                                                                            B. Johnathan
+                                                                            {topPopularToday.fullname}
                                                                         </span>
-                                                                    </a>
+                                                                    </Link>
                                                                     <br />
                                                                     <span className="author-add color-grey">
-                                                                        Maidstone, Kent
+                                                                        {new Date(topPopularToday.createdAt).toLocaleDateString('vi-VN')}
                                                                     </span>
                                                                 </div>
                                                                 <div className="float-right">
-                                                                    <a href="single.html" className="read-more">
+                                                                    <Link to={`/bai-viet/${topPopularToday.slug}`} className="read-more">
                                                                         <span className="mr-10">
                                                                             <i
                                                                                 className="fa fa-thumbtack"
                                                                                 aria-hidden="true"
                                                                             />
                                                                         </span>
-                                                                        Picked by Editor
-                                                                    </a>
+                                                                        Đọc Thêm
+                                                                    </Link>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -183,13 +194,6 @@ const TrangChu = () => {
                                                         <h5 className="widget-title mb-0">
                                                             Top <span>Chuyên Mục</span>
                                                         </h5>
-                                                    </div>
-                                                    <div className="col-5 text-right">
-                                                        <h6 className="font-medium pr-15">
-                                                            <a className="text-muted font-small" href="#">
-                                                                Xem thêm
-                                                            </a>
-                                                        </h6>
                                                     </div>
                                                 </div>
                                             </div>
@@ -365,13 +369,6 @@ const TrangChu = () => {
                                                         <h4 className="widget-title mb-0" id='list-articles-new'>
                                                             Bài Viết <span>Mới</span>
                                                         </h4>
-                                                    </div>
-                                                    <div className="col-5 text-right">
-                                                        <h6 className="font-medium pr-15">
-                                                            <a className="text-muted font-small" href="#">
-                                                                Xem tất cả
-                                                            </a>
-                                                        </h6>
                                                     </div>
                                                 </div>
                                             </div>

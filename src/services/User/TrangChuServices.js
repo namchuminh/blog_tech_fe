@@ -81,6 +81,15 @@ const TrangChuServices = {
             throw error;
         }
     },
+
+    getTopPopularToday: async () => {
+        try {
+            const response = await axiosInstance.get(`/others/popular_today`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
 export default TrangChuServices;

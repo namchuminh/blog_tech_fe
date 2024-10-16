@@ -125,11 +125,15 @@ const BaiViet = () => {
                     content: postComment
                 };
                 const response = await BaiVietServices.postComment(id, data);
-                fetchComment(id);
-                setPostComment('');
-                const element = document.getElementById('list-comments-new');
-                if (element) {
-                    element.scrollIntoView({ behavior: 'instant', block: 'start' });
+                if(response.status == 201){
+                    fetchComment(id);
+                    setPostComment('');
+                    const element = document.getElementById('list-comments-new');
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'instant', block: 'start' });
+                    }
+                }else{
+                    toast.error(response.response.data.message)
                 }
             } catch (error) {
                 console.error('Lỗi khi gọi API:', error);
