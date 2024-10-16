@@ -29,15 +29,23 @@ const BaiViet = () => {
     const [user, setUser] = useState({})
     const [isAuthor, setIsAuthor] = useState(-1);
     const [isFollower, setIsFollower] = useState(false);
+    const [comments, setComments] = useState([]);
+    const [postComment, setPostComment] = useState('');
+    const [related, setRelated] = useState([]);
+
     
-    const fetchArticle = async () => {
+    const fetchArticle = async (slugArticle = slug) => {
         try {
-            const response = await BaiVietServices.showArticle(slug);
+            const response = await BaiVietServices.showArticle(slugArticle);
             setArticle(response.data.article);
             setView(response.data.view_count);
             setAuthor(response.data.article.user);
             setTags(response.data.article.tags.split(',').map(tag => tag.trim()));
             setCategories(response.data.categories);
+            fetchComment(response.data.article.article_id);
+            const tags = response.data.article.tags.split(',').map(tag => tag.trim());
+            const categoryIds = response.data.categories.map(category => category.category_id);
+            fetchRelated(response.data.article.article_id, { categoryIds, tags });
             try {
                 const responseUser = await TaiKhoanServices.userByUsername(response.data.article.user_id);
                 setUser(responseUser.data.user);
@@ -50,6 +58,24 @@ const BaiViet = () => {
             }
         } catch (error) {
             navigate('/404');
+            console.error('Lỗi khi gọi API:', error);
+        }
+    }
+
+    const fetchComment = async (id) => {
+        try {
+            const response = await BaiVietServices.listComment(id);
+            setComments(response.data.comments);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    }
+
+    const fetchRelated = async (id, data) => {
+        try {
+            const response = await BaiVietServices.getRelated(id,data);
+            setRelated(response.data.articles);
+        } catch (error) {
             console.error('Lỗi khi gọi API:', error);
         }
     }
@@ -90,6 +116,32 @@ const BaiViet = () => {
         
     }
 
+    const handelPostComment = async (id) => {
+        if(!localStorage.getItem('token')){
+            toast.error("Vui lòng đăng nhập để bình luận!");
+        }else{
+            try {
+                const data = {
+                    content: postComment
+                };
+                const response = await BaiVietServices.postComment(id, data);
+                fetchComment(id);
+                setPostComment('');
+                const element = document.getElementById('list-comments-new');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'instant', block: 'start' });
+                }
+            } catch (error) {
+                console.error('Lỗi khi gọi API:', error);
+            }
+        }
+    }
+
+    const handelToArticleRelated = (slug) => {
+        fetchArticle(slug);
+        window.scroll(0,0);
+    }
+
     return (
         <>
             <main className="position-relative">
@@ -126,15 +178,11 @@ const BaiViet = () => {
                                     <p className="font-x-small mt-10 text-white">
                                         <span className="hit-count">
                                             <i className="ti-comment mr-5" />
-                                            82 comments
+                                            {comments.length} bình luận
                                         </span>
                                         <span className="hit-count">
                                             <i className="ti-heart mr-5" />
                                             68 likes
-                                        </span>
-                                        <span className="hit-count">
-                                            <i className="ti-star mr-5" />
-                                            8/10
                                         </span>
                                     </p>
                                 </div>
@@ -208,19 +256,15 @@ const BaiViet = () => {
                                 <div className="font-weight-500 entry-meta meta-1 font-x-small color-grey">
                                     <span className="update-on">
                                         <i className="ti ti-reload mr-5" />
-                                        Updated 18/09/2020 10:28 EST
+                                        Cập nhật {new Date(article.updatedAt).toLocaleDateString('vi-VN')}
                                     </span>
                                     <span className="hit-count">
                                         <i className="ti-comment" />
-                                        82 comments
+                                        {comments.length} bình luận
                                     </span>
                                     <span className="hit-count">
                                         <i className="ti-heart" />
                                         68 likes
-                                    </span>
-                                    <span className="hit-count">
-                                        <i className="ti-star" />
-                                        8/10
                                     </span>
                                 </div>
                                 <div className="overflow-hidden mt-30">
@@ -244,7 +288,7 @@ const BaiViet = () => {
                                             <li className="list-inline-item">
                                                 <span className="font-small text-muted">
                                                     <i className="ti-sharethis mr-5" />
-                                                    Share:{" "}
+                                                    Chia sẻ:{" "}
                                                 </span>
                                             </li>
                                             <li className="list-inline-item">
@@ -400,257 +444,99 @@ const BaiViet = () => {
                             </div>
                             {/*related posts*/}
                             <div className="related-posts">
-                                <h3 className="mb-30">Related posts</h3>
+                                <h3 className="mb-30">Bài Viết Liên Quan</h3>
                                 <div className="row">
-                                    <article className="col-lg-4">
-                                        <div className="background-white border-radius-10 p-10 mb-30">
-                                            <div className="post-thumb d-flex mb-15 border-radius-15 img-hover-scale">
-                                                <a href="single.html">
-                                                    <img
-                                                        className="border-radius-15"
-                                                        src="assets/imgs/news-2.jpg"
-                                                        alt=""
-                                                    />
-                                                </a>
-                                            </div>
-                                            <div className="pl-10 pr-10">
-                                                <div className="entry-meta mb-15 mt-10">
-                                                    <a className="entry-meta meta-2" href="category.html">
-                                                        <span className="post-in text-primary font-x-small">
-                                                            Politic
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <h5 className="post-title mb-15">
-                                                    <span className="post-format-icon">
-                                                        <ion-icon
-                                                            name="image-outline"
-                                                            role="img"
-                                                            className="md hydrated"
-                                                            aria-label="image outline"
+                                    {related.map((article, index) => (
+                                        <article key={index} className="col-lg-4">
+                                            <div className="background-white border-radius-10 p-10 mb-30">
+                                                <div className="post-thumb d-flex mb-15 border-radius-15 img-hover-scale">
+                                                    <Link to={`/bai-viet/${article.slug}`} onClick={() => handelToArticleRelated(article.slug)}>
+                                                        <img
+                                                            className="border-radius-15"
+                                                            style={{ height: '183px', width: '261px'}}
+                                                            src={`http://127.0.0.1:3001/${article.image_url}`}
+                                                            alt=""
                                                         />
-                                                    </span>
-                                                    <a href="single.html">
-                                                        The litigants on the screen are not actors
-                                                    </a>
-                                                </h5>
-                                                <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase mb-10">
-                                                    <span className="post-by">
-                                                        By <a href="author.html">John Nathan</a>
-                                                    </span>
-                                                    <span className="post-on">8m ago</span>
+                                                    </Link>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </article>
-                                    <article className="col-lg-4">
-                                        <div className="background-white border-radius-10 p-10 mb-30">
-                                            <div className="post-thumb d-flex mb-15 border-radius-15 img-hover-scale">
-                                                <a href="single.html">
-                                                    <img
-                                                        className="border-radius-15"
-                                                        src="assets/imgs/news-5.jpg"
-                                                        alt=""
-                                                    />
-                                                </a>
-                                            </div>
-                                            <div className="pl-10 pr-10">
-                                                <div className="entry-meta mb-15 mt-10">
-                                                    <a className="entry-meta meta-2" href="category.html">
-                                                        <span className="post-in text-success font-x-small">
-                                                            Tech
+                                                <div className="pl-10 pr-10">
+                                                    <div className="entry-meta mb-15 mt-10">
+                                                        <Link className="entry-meta meta-2" to={`/chuyen-muc/${article.category_slug}`}>
+                                                            <span className={`post-in text-${colors[index % colors.length].split('-')[1]} font-x-small`}>
+                                                                {article.category_name}
+                                                            </span>
+                                                        </Link>
+                                                    </div>
+                                                    <h5 className="post-title mb-15">
+                                                        <Link to={`/bai-viet/${article.slug}`} onClick={() => handelToArticleRelated(article.slug)}>
+                                                            {article.title}
+                                                        </Link>
+                                                    </h5>
+                                                    <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase mb-10">
+                                                        <span className="post-by">
+                                                            bởi <Link to={`/nguoi-dung/${article.username}`}>{article.fullname}</Link>
                                                         </span>
-                                                    </a>
-                                                </div>
-                                                <h5 className="post-title mb-15">
-                                                    <span className="post-format-icon">
-                                                        <ion-icon
-                                                            name="headset-outline"
-                                                            role="img"
-                                                            className="md hydrated"
-                                                            aria-label="headset outline"
-                                                        />
-                                                    </span>
-                                                    <a href="single.html">
-                                                        Essential Qualities of Highly Successful Music
-                                                    </a>
-                                                </h5>
-                                                <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase mb-10">
-                                                    <span className="post-by">
-                                                        By <a href="author.html">K. Steven</a>
-                                                    </span>
-                                                    <span className="post-on">24m ago</span>
+                                                        <span className="post-on">{new Date(article.createdAt).toLocaleDateString('vi-VN')}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </article>
-                                    <article className="col-lg-4">
-                                        <div className="background-white border-radius-10 p-10">
-                                            <div className="post-thumb d-flex mb-15 border-radius-15 img-hover-scale">
-                                                <a href="single.html">
-                                                    <img
-                                                        className="border-radius-15"
-                                                        src="assets/imgs/news-7.jpg"
-                                                        alt=""
-                                                    />
-                                                </a>
-                                            </div>
-                                            <div className="pl-10 pr-10">
-                                                <div className="entry-meta mb-15 mt-10">
-                                                    <a className="entry-meta meta-2" href="category.html">
-                                                        <span className="post-in text-danger font-x-small">
-                                                            Global
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <h5 className="post-title mb-15">
-                                                    <a href="single.html">
-                                                        Essential Qualities of Highly Successful Music
-                                                    </a>
-                                                </h5>
-                                                <div className="entry-meta meta-1 font-x-small color-grey float-left text-uppercase mb-10">
-                                                    <span className="post-by">
-                                                        By <a href="author.html">K. Jonh</a>
-                                                    </span>
-                                                    <span className="post-on">24m ago</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </article>
+                                        </article>
+                                    ))}
                                 </div>
                             </div>
                             {/*Comments*/}
                             <div className="comments-area">
-                                <h3 className="mb-30">03 Comments</h3>
-                                <div className="comment-list">
-                                    <div className="single-comment justify-content-between d-flex">
-                                        <div className="user justify-content-between d-flex">
-                                            <div className="thumb">
-                                                <img src="assets/imgs/authors/author-2.png" alt="" />
-                                            </div>
-                                            <div className="desc">
-                                                <p className="comment">
-                                                    Every secret of a writer’s soul, every experience of his life,
-                                                    every quality of his mind, is written large in his works.
-                                                    Start writing, no matter what. The water does not flow until
-                                                    the faucet is turned on.
-                                                </p>
-                                                <div className="d-flex justify-content-between">
-                                                    <div className="d-flex align-items-center">
-                                                        <h5>
-                                                            <a to="#">Alice Rose</a>
-                                                        </h5>
-                                                        <p className="date">December 4, 2020 at 3:12 pm </p>
+                                <h3 className="mb-30" id='list-comments-new'>Bình Luận ({comments.length})</h3>
+                                { 
+                                    comments.length == 0 ?
+                                        <p>Chưa có bình luận nào cho bài viết này!</p>
+                                    :
+                                    null
+                                }
+                                {
+                                    comments.map((comment, index) => (
+                                        <div key={index} className="comment-list">
+                                            <div className="single-comment justify-content-between d-flex">
+                                                <div className="user justify-content-between d-flex">
+                                                    <div className="thumb">
+                                                        <img src={`http://127.0.0.1:3001/${comment.user.avatar_url}`} alt="" />
                                                     </div>
-                                                    <div className="reply-btn">
-                                                        <a to="#" className="btn-reply text-uppercase">
-                                                            reply
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="comment-list">
-                                    <div className="single-comment justify-content-between d-flex">
-                                        <div className="user justify-content-between d-flex">
-                                            <div className="thumb">
-                                                <img src="assets/imgs/authors/author-3.png" alt="" />
-                                            </div>
-                                            <div className="desc">
-                                                <p className="comment">
-                                                    You don’t start out writing good stuff. You start out writing
-                                                    crap and thinking it’s good stuff, and then gradually you get
-                                                    better at it. That’s why I say one of the most valuable traits
-                                                    is persistence.
-                                                </p>
-                                                <div className="d-flex justify-content-between">
-                                                    <div className="d-flex align-items-center">
-                                                        <h5>
-                                                            <a to="#">O.Henry</a>
-                                                        </h5>
-                                                        <p className="date">December 4, 2020 at 3:12 pm </p>
-                                                    </div>
-                                                    <div className="reply-btn">
-                                                        <a to="#" className="btn-reply text-uppercase">
-                                                            reply
-                                                        </a>
+                                                    <div className="desc">
+                                                        <p className="comment">
+                                                            {
+                                                                comment.content
+                                                            }
+                                                        </p>
+                                                        <div className="d-flex justify-content-between">
+                                                            <div className="d-flex align-items-center">
+                                                                <h5>
+                                                                    { 
+                                                                    comment.user_id == isAuthor 
+                                                                    ?
+                                                                        <Link to={`/tai-khoan`}>{comment.user.fullname}</Link>
+                                                                    :
+                                                                        <Link to={`/nguoi-dung/${comment.user.username}`}>{comment.user.fullname}</Link>
+                                                                    }
+                                                                </h5>
+                                                                <p className="date">
+                                                                    {
+                                                                        new Date(comment.createdAt).toLocaleDateString('vi-VN')
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="comment-list">
-                                    <div className="single-comment justify-content-between d-flex">
-                                        <div className="user justify-content-between d-flex">
-                                            <div className="thumb">
-                                                <img src="assets/imgs/authors/author-16.png" alt="" />
-                                            </div>
-                                            <div className="desc">
-                                                <p className="comment">
-                                                    So read on to find some apt quotes for all writing occasions
-                                                    from considering to be a writer to experiencing a writers
-                                                    block to have already created that masterpiece yet
-                                                    contemplating if it’s good enough.
-                                                </p>
-                                                <div className="d-flex justify-content-between">
-                                                    <div className="d-flex align-items-center">
-                                                        <h5>
-                                                            <a to="#">Lima Azumi</a>
-                                                        </h5>
-                                                        <p className="date">December 4, 2020 at 3:12 pm </p>
-                                                    </div>
-                                                    <div className="reply-btn">
-                                                        <a to="#" className="btn-reply text-uppercase">
-                                                            reply
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                    ))
+                                }
                             </div>
                             {/*comment form*/}
-                            <div className="comment-form">
-                                <h3 className="mb-30">Leave a Reply</h3>
-                                <form className="form-contact comment_form" action="#" id="commentForm">
+                            <div className="comment-form" style={{ marginTop: '0px'}}>
+                                <h3 className="mb-30">Viết Bình Luận</h3>
+                                <div className="form-contact comment_form" id="commentForm">
                                     <div className="row">
-                                        <div className="col-sm-6">
-                                            <div className="form-group">
-                                                <input
-                                                    className="form-control"
-                                                    name="name"
-                                                    id="name"
-                                                    type="text"
-                                                    placeholder="Name"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-6">
-                                            <div className="form-group">
-                                                <input
-                                                    className="form-control"
-                                                    name="email"
-                                                    id="email"
-                                                    type="email"
-                                                    placeholder="Email"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="form-group">
-                                                <input
-                                                    className="form-control"
-                                                    name="website"
-                                                    id="website"
-                                                    type="text"
-                                                    placeholder="Website"
-                                                />
-                                            </div>
-                                        </div>
                                         <div className="col-12">
                                             <div className="form-group">
                                                 <textarea
@@ -658,19 +544,20 @@ const BaiViet = () => {
                                                     name="comment"
                                                     id="comment"
                                                     cols={30}
-                                                    rows={9}
-                                                    placeholder="Write Comment"
-                                                    defaultValue={""}
+                                                    rows={4}
+                                                    placeholder="Nhập nội dung bình luận"
+                                                    value={postComment}
+                                                    onChange={(e) => setPostComment(e.target.value)}
                                                 />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="form-group">
-                                        <button type="submit" className="button button-contactForm">
-                                            Post Comment
+                                        <button type="submit" onClick={() => handelPostComment(article.article_id)} className="button button-contactForm">
+                                            Bình Luận
                                         </button>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
