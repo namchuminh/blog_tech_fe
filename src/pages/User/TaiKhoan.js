@@ -236,10 +236,23 @@ const TaiKhoan = () => {
                                                         </div>
                                                         <div className="float-right">
                                                             <Link to={`/chinh-sua/${article.article_id}`}>
-                                                                <span className="mr-10">
-                                                                    <i className="fa-regular fa-pen-to-square"></i>
-                                                                </span>
-                                                                Chỉnh Sửa
+                                                                {
+                                                                    article.slug == '[rejected]' 
+                                                                    ?
+                                                                        <>
+                                                                            <span className="mr-10">
+                                                                                <i className="fa-solid fa-circle-exclamation"></i>
+                                                                            </span>
+                                                                            Bị Từ Chối
+                                                                        </>
+                                                                    :
+                                                                        <>
+                                                                            <span className="mr-10">
+                                                                                <i className="fa-regular fa-pen-to-square"></i>
+                                                                            </span>
+                                                                            Chỉnh Sửa
+                                                                        </>
+                                                                }
                                                             </Link>
                                                         </div>
                                                     </div>
@@ -290,9 +303,21 @@ const TaiKhoan = () => {
                                                     </div>
                                                     <div className="float-right">
                                                         <Link to={`/chinh-sua/${article.article_id}`}>
-                                                            <span className="mr-10">
-                                                                <i className="fa-regular fa-pen-to-square"></i>
-                                                            </span>
+                                                            {
+                                                                article.slug == '[rejected]' 
+                                                                ?
+                                                                    <>
+                                                                        <span className="mr-10">
+                                                                            <i className="fa-solid fa-circle-exclamation"></i>
+                                                                        </span>
+                                                                    </>
+                                                                :
+                                                                    <>
+                                                                        <span className="mr-10">
+                                                                            <i className="fa-regular fa-pen-to-square"></i>
+                                                                        </span>
+                                                                    </>
+                                                            }
                                                         </Link>
                                                     </div>
                                                 </div>

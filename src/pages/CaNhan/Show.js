@@ -22,11 +22,11 @@ const Show = () => {
         const fetchData = async () => {
             const show = await NguoiDungServices.profile();
             if (show.status == 200) {
-                setFulname(show.data.fullname)
-                setUsername(show.data.username)
-                setEmail(show.data.email)
-                setBio(show.data.bio)
-                setAvatar(`http://127.0.0.1:3001/${show.data.avatar_url}`)
+                setFulname(show.data.user.fullname)
+                setUsername(show.data.user.username)
+                setEmail(show.data.user.email)
+                setBio(show.data.user.bio)
+                setAvatar(`http://127.0.0.1:3001/${show.data.user.avatar_url}`)
             } else {
                 navigate('/admin');
             }

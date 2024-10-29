@@ -139,7 +139,15 @@ const ChinhSua = () => {
                 <div className="archive-header text-center mb-50">
                     <div className="container">
                         <h2>
-                            <span className="text-success">{titleChange}</span>
+                            <span className="text-success">
+                                {
+                                    slug == '[rejected]' 
+                                    ? 
+                                        titleChange.split(']')[0] + "]"
+                                    : 
+                                        titleChange
+                                }
+                            </span>
                         </h2>
                         <div className="breadcrumb">
                             <span className="no-arrow">Bạn đang xem:</span>
@@ -151,7 +159,13 @@ const ChinhSua = () => {
                                 Tài Khoản
                             </Link>
                             <span />
-                            Chỉnh Sửa
+                            {
+                                slug == '[rejected]' 
+                                ? 
+                                    "Xem Bài Viết"
+                                : 
+                                    "Chỉnh Sửa"
+                            }
                         </div>
                     </div>
                 </div>
@@ -214,9 +228,16 @@ const ChinhSua = () => {
                                                             id="title"
                                                             name="title"
                                                             placeholder="Tiêu đề bài viết"
-                                                            value={title}
+                                                            value={
+                                                                slug == '[rejected]' 
+                                                                ? 
+                                                                    title.split(']')[1]
+                                                                : 
+                                                                    title
+                                                            }
                                                             onChange={(e) => handelTitleChange(e)}
                                                             required
+                                                            disabled={ slug == '[rejected]' ? true : false}
                                                         />
                                                     </div>
                                                 </div>
@@ -232,6 +253,7 @@ const ChinhSua = () => {
                                                             value={slug}
                                                             onChange={(e) => setSlug(e.target.value)}
                                                             required
+                                                            disabled={ slug == '[rejected]' ? true : false}
                                                         />
                                                     </div>
                                                 </div>
@@ -274,6 +296,7 @@ const ChinhSua = () => {
                                                             value={tags}
                                                             onChange={(e) => setTags(e.target.value)}
                                                             required
+                                                            disabled={ slug == '[rejected]' ? true : false}
                                                         />
                                                     </div>
                                                 </div>
@@ -287,6 +310,7 @@ const ChinhSua = () => {
                                                             name="image"
                                                             onChange={(e) => setImage(e.target.files[0])}
                                                             required
+                                                            disabled={ slug == '[rejected]' ? true : false}
                                                         />
                                                     </div>
                                                 </div>
@@ -298,7 +322,9 @@ const ChinhSua = () => {
                                                         className="form-control bg-white"
                                                         id="draft"
                                                         name="draft"
-                                                        value={isDraft ? "Bản Nháp" : "Chính Thức"}
+                                                        value={
+                                                            slug == '[rejected]' ? "Bị Từ Chối" : isDraft ? "Bản Nháp" : "Chính Thức"
+                                                        }
                                                         required
                                                         disabled
                                                         style={{ cursor: 'not-allowed' }}
@@ -306,8 +332,17 @@ const ChinhSua = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button className="btn-profile-update btn btn-primary" style={{ zIndex: 0 }} onClick={(e) => handleSubmit(e, 1)}>Lưu Bản Nháp</button>
-                                            <button className="btn-profile-update btn btn-primary float-right" style={{ zIndex: 0 }} onClick={(e) => handleSubmit(e)}>Đăng Bài Viết</button>
+                                            {
+                                                slug == '[rejected]'
+                                                ?
+                                                    null
+                                                :
+                                                    <>
+                                                        <button className="btn-profile-update btn btn-primary" style={{ zIndex: 0 }} onClick={(e) => handleSubmit(e, 1)}>Lưu Bản Nháp</button>
+                                                        <button className="btn-profile-update btn btn-primary float-right" style={{ zIndex: 0 }} onClick={(e) => handleSubmit(e)}>Đăng Bài Viết</button>
+                                                    </>
+                                            }
+                                            
                                         </div>
                                     </div>
 

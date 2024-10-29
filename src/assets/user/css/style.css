@@ -620,3 +620,9 @@ picture img{
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #ffffff;
+    opacity: 1;
+    cursor: not-allowed;
+}
