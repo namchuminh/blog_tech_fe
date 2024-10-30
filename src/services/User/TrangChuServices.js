@@ -89,6 +89,15 @@ const TrangChuServices = {
         } catch (error) {
             throw error;
         }
+    },
+
+    getFollowing: async (page) => {
+        try {
+            const response = await axiosInstance.get(`/others/articles_following/?page=${page}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

@@ -125,7 +125,7 @@ const Header = () => {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link to="/bai-viet">
+                                                <Link to={ !localStorage.getItem('token') ? '/dang-nhap' : '/theo-doi' }>
                                                     <span className="mr-15">
                                                         <i className="fa-solid fa-fire"></i>
                                                     </span>
