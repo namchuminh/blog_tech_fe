@@ -98,7 +98,16 @@ const TrangChuServices = {
         } catch (error) {
             throw error;
         }
-    }
+    },
+
+    getArticlesByCategorySlug: async (slug, page) => {
+        try {
+            const response = await axiosInstance.get(`/others/articles_categories/?slug=${slug}&page=${page}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default TrangChuServices;
