@@ -32,6 +32,8 @@ const BaiViet = () => {
     const [comments, setComments] = useState([]);
     const [postComment, setPostComment] = useState('');
     const [related, setRelated] = useState([]);
+    const [likes, setLikes] = useState(0);
+    const [liked, setLiked] = useState(false);
 
     const currentUrl = window.location.href;
     
@@ -47,6 +49,8 @@ const BaiViet = () => {
             const tags = response.data.article.tags.split(',').map(tag => tag.trim());
             const categoryIds = response.data.categories.map(category => category.category_id);
             fetchRelated(response.data.article.article_id, { categoryIds, tags });
+            fetchLike(response.data.article.article_id);
+            fetchLiked(response.data.article.article_id);
             try {
                 const responseUser = await TaiKhoanServices.userByUsername(response.data.article.user_id);
                 setUser(responseUser.data.user);
@@ -113,8 +117,28 @@ const BaiViet = () => {
         }
     }
 
-    const handelLikeArticle = () => {
-        
+    const fetchLike = async (id) => {
+        try {
+            const response = await BaiVietServices.getLike(id);
+            setLikes(response.data.likes);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    }
+
+    const fetchLiked = async (id) => {
+        try {
+            const response = await BaiVietServices.liked(id);
+            setLiked(response.data.liked);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    }
+
+    const handelLikeArticle = async (id) => {
+        const response = await BaiVietServices.like(id);
+        fetchLike(id);
+        setLiked(!liked)
     }
 
     const handelPostComment = async (id) => {
@@ -187,7 +211,7 @@ const BaiViet = () => {
                                         </span>
                                         <span className="hit-count">
                                             <i className="ti-heart mr-5" />
-                                            68 likes
+                                            { likes } lượt thích
                                         </span>
                                     </p>
                                 </div>
@@ -269,7 +293,7 @@ const BaiViet = () => {
                                     </span>
                                     <span className="hit-count">
                                         <i className="ti-heart" />
-                                        68 likes
+                                        { likes } lượt thích
                                     </span>
                                 </div>
                                 <div className="overflow-hidden mt-30">
@@ -406,8 +430,17 @@ const BaiViet = () => {
                                             </>
                                         :
                                         <>
-                                            <Link to="#" onClick={() => handelLikeArticle} className="author-bio-link text-muted" style={{ textTransform: 'unset'}}>
-                                                <i className="fa-solid fa-thumbs-up"></i> Like Bài
+                                            <Link 
+                                                to="#" 
+                                                onClick={() => handelLikeArticle(article.article_id)} 
+                                                className={`author-bio-link ${liked ? '' : 'text-muted'}`} 
+                                                style={{ 
+                                                    textTransform: 'unset', 
+                                                    color: liked ? '#f2546a' : 'inherit' 
+                                                }}
+                                            >
+                                                <i className="fa-solid fa-thumbs-up"></i> 
+                                                {liked ? " Bỏ Like" : " Like Bài"}
                                             </Link>
                                             <Link onClick={() => handelFollow(user.username)} to="#" className="author-bio-link text-muted" style={{ textTransform: 'unset'}}>
                                                 {
