@@ -33,6 +33,7 @@ const BaiViet = () => {
     const [postComment, setPostComment] = useState('');
     const [related, setRelated] = useState([]);
 
+    const currentUrl = window.location.href;
     
     const fetchArticle = async (slugArticle = slug) => {
         try {
@@ -202,8 +203,8 @@ const BaiViet = () => {
                                     <li>
                                         <a
                                             className="social-icon facebook-icon text-xs-center"
-                                           
-                                            to="#"
+                                            target="_blank"
+                                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
                                         >
                                             <i className="ti-facebook" />
                                         </a>
@@ -211,8 +212,8 @@ const BaiViet = () => {
                                     <li>
                                         <a
                                             className="social-icon twitter-icon text-xs-center"
-                                           
-                                            to="#"
+                                            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}
+                                            target="_blank"
                                         >
                                             <i className="ti-twitter-alt" />
                                         </a>
@@ -220,8 +221,8 @@ const BaiViet = () => {
                                     <li>
                                         <a
                                             className="social-icon pinterest-icon text-xs-center"
-                                           
-                                            to="#"
+                                            href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(currentUrl)}`}
+                                            target="_blank"
                                         >
                                             <i className="ti-pinterest" />
                                         </a>
@@ -229,8 +230,8 @@ const BaiViet = () => {
                                     <li>
                                         <a
                                             className="social-icon instagram-icon text-xs-center"
-                                           
-                                            to="#"
+                                            href="https://www.instagram.com" // Instagram không hỗ trợ chia sẻ URL qua liên kết
+                                            target="_blank"
                                         >
                                             <i className="ti-instagram" />
                                         </a>
@@ -238,8 +239,8 @@ const BaiViet = () => {
                                     <li>
                                         <a
                                             className="social-icon linkedin-icon text-xs-center"
-                                           
-                                            to="#"
+                                            href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`}
+                                            target="_blank"
                                         >
                                             <i className="ti-linkedin" />
                                         </a>
@@ -298,8 +299,8 @@ const BaiViet = () => {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="social-icon facebook-icon text-xs-center"
-                                                   
-                                                    to="#"
+                                                    target="_blank"
+                                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
                                                 >
                                                     <i className="ti-facebook" />
                                                 </a>
@@ -307,8 +308,8 @@ const BaiViet = () => {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="social-icon twitter-icon text-xs-center"
-                                                   
-                                                    to="#"
+                                                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}
+                                                    target="_blank"
                                                 >
                                                     <i className="ti-twitter-alt" />
                                                 </a>
@@ -316,8 +317,8 @@ const BaiViet = () => {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="social-icon pinterest-icon text-xs-center"
-                                                   
-                                                    to="#"
+                                                    href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(currentUrl)}`}
+                                                    target="_blank"
                                                 >
                                                     <i className="ti-pinterest" />
                                                 </a>
@@ -325,8 +326,8 @@ const BaiViet = () => {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="social-icon instagram-icon text-xs-center"
-                                                   
-                                                    to="#"
+                                                    href="https://www.instagram.com" // Instagram không hỗ trợ chia sẻ URL qua liên kết
+                                                    target="_blank"
                                                 >
                                                     <i className="ti-instagram" />
                                                 </a>
@@ -334,10 +335,19 @@ const BaiViet = () => {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="social-icon linkedin-icon text-xs-center"
-                                                   
-                                                    to="#"
+                                                    href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`}
+                                                    target="_blank"
                                                 >
                                                     <i className="ti-linkedin" />
+                                                </a>
+                                            </li>
+                                            <li className="list-inline-item">
+                                                <a
+                                                    className="social-icon email-icon text-xs-center"
+                                                
+                                                    to="#"
+                                                >
+                                                    <i className="ti-email" />
                                                 </a>
                                             </li>
                                         </ul>
