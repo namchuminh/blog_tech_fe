@@ -50,7 +50,9 @@ const BaiViet = () => {
             const categoryIds = response.data.categories.map(category => category.category_id);
             fetchRelated(response.data.article.article_id, { categoryIds, tags });
             fetchLike(response.data.article.article_id);
-            fetchLiked(response.data.article.article_id);
+            if (localStorage.getItem('token')) {
+                fetchLiked(response.data.article.article_id);
+            }
             try {
                 const responseUser = await TaiKhoanServices.userByUsername(response.data.article.user_id);
                 setUser(responseUser.data.user);
@@ -136,6 +138,10 @@ const BaiViet = () => {
     }
 
     const handelLikeArticle = async (id) => {
+        if (!localStorage.getItem('token')) {
+            toast.error("Vui lòng đăng nhập để thích bài viết!");
+            return;
+        }
         const response = await BaiVietServices.like(id);
         fetchLike(id);
         setLiked(!liked)
