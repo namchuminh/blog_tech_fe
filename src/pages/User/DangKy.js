@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import DangKyServices from '../../services/User/DangKyServices'
+import { useEffect, useState, useRef } from 'react';
+import DangKyServices from '../../services/User/DangKyServices';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,19 +10,70 @@ const DangKy = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [captchaAnswer, setCaptchaAnswer] = useState('');
+    const [captchaText, setCaptchaText] = useState('');
+    const canvasRef = useRef(null);
+
+    // Function to generate random CAPTCHA (alphanumeric string with random length)
+    const generateCaptcha = () => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const captchaLength = Math.floor(Math.random() * 3) + 4; // Random length between 4 and 6
+        let captcha = '';
+        for (let i = 0; i < captchaLength; i++) {
+            captcha += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        setCaptchaText(captcha); // Store captcha text for validation
+        return captcha;
+    };
+
+    const drawCaptcha = () => {
+        const captchaText = generateCaptcha();
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear the canvas
+
+        // Set styles for CAPTCHA text
+        ctx.font = '20px Arial';
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Calculate the spacing dynamically to avoid characters being cut off
+        const padding = 10; // Padding between characters
+        const totalWidth = captchaText.length * 30 + padding * (captchaText.length - 1); // Adjust for padding
+        const startX = (canvasRef.current.width - totalWidth) / 2; // Center the text on the canvas
+
+        // Draw each character with some randomness
+        for (let i = 0; i < captchaText.length; i++) {
+            const x = startX + i * (30 + padding); // Adjust x position based on character width and padding
+            const y = canvasRef.current.height / 2;
+
+            // Random rotation for added difficulty
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(Math.random() * 0.5 - 0.25); // Random rotation
+            ctx.fillText(captchaText.charAt(i), 0, 0);
+            ctx.restore();
+        }
+    };
 
     useEffect(() => {
-        if (localStorage.getItem('token')) {
-            navigate('/tai-khoan');
-        }
-    }, [navigate]);
+        // Draw CAPTCHA when component is mounted
+        drawCaptcha();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        // Check if CAPTCHA is correct
+        if (captchaAnswer !== captchaText) {
+            toast.error("Câu trả lời CAPTCHA không chính xác!");
+            drawCaptcha();  // Redraw CAPTCHA
+            return;
+        }
+
         const register = await DangKyServices.register({ fullname, username, email, password });
 
-        if(register.response && register.response.status == 400){
+        if(register.response && register.response.status === 400){
           toast.error(register.response.data.message);
         }else{
           toast.success(register.data.message);
@@ -104,6 +155,24 @@ const DangKy = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-sm-12 mt-15">
+                                <div className="form-group d-flex align-items-center">
+                                    <canvas
+                                        ref={canvasRef}
+                                        width="200"
+                                        height="50"
+                                        style={{ border: '1px solid #ccc', background: 'white', borderRadius: 15 }}
+                                    />
+                                    <input
+                                        className="form-control ml-3"
+                                        type="text"
+                                        placeholder="Nhập câu trả lời CAPTCHA"
+                                        value={captchaAnswer}
+                                        onChange={(e) => setCaptchaAnswer(e.target.value)}
+                                        style={{ maxWidth: '200px' }} // Set maximum width for input field
                                     />
                                 </div>
                             </div>
