@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DangNhapServices from '../../services/User/DangNhapServices';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-const DangNhap = () => {
+const MatKhauMoi = () => {
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get("token"); // Lấy giá trị của tham số 'token'
+
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [rePassword, setRePassword] = useState('');
 
     // Check for access token in localStorage
     useEffect(() => {
@@ -18,17 +21,21 @@ const DangNhap = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if(password != rePassword){
+            toast.error("Mật khẩu không trùng khớp!");
+            return;
+        }
+
         // Handle login logic here (e.g., API call)
-        const login = await DangNhapServices.login({ username, password });
-        if(login.response && login.response.status == 400){
+        const reset_password = await DangNhapServices.reset_password({ newPassword: password, token });
+        if(reset_password.response && reset_password.response.status == 400){
           //Hiển thị thông báo login.response.data.message
-          toast.error(login.response.data.message);
+          toast.error(reset_password.response.data.message);
+          navigate('/dang-nhap');
         }else{
-          // Lưu token và refreshToken
-          toast.success(login.data.message);
-          localStorage.setItem('token', login.data.token);
-          localStorage.setItem('refreshToken', login.data.refreshToken);
-          navigate('/tai-khoan');
+          toast.success("Thay đổi mật khẩu thành công, vui lòng đăng nhập!");
+          navigate('/dang-nhap');
         }
     };
 
@@ -38,10 +45,10 @@ const DangNhap = () => {
                 <div className="archive-header text-center mb-30">
                     <div className="container">
                         <h2>
-                            <span className="text-dark">Đăng Nhập</span>
+                            <span className="text-dark">Lấy Mật Khẩu</span>
                         </h2>
                         <div className="breadcrumb">
-                            Truy cập hệ thống để sử dụng chức năng
+                            Thay đổi mật khẩu mới để đăng nhập
                         </div>
                     </div>
                 </div>
@@ -52,21 +59,7 @@ const DangNhap = () => {
                                 <div className="form-group">
                                     <input
                                         className="form-control"
-                                        name="name"
-                                        id="name"
-                                        type="text"
-                                        placeholder="Nhập tài khoản"
-                                        required
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-sm-12 mt-15">
-                                <div className="form-group">
-                                    <input
-                                        className="form-control"
-                                        name="email"
+                                        name="password"
                                         id="password"
                                         type="password"
                                         placeholder="Nhập mật khẩu"
@@ -77,17 +70,30 @@ const DangNhap = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="row">
+                            <div className="col-sm-12">
+                                <div className="form-group">
+                                    <input
+                                        className="form-control"
+                                        name="password"
+                                        id="password"
+                                        type="password"
+                                        placeholder="Xác nhận mật khẩu"
+                                        required
+                                        value={rePassword}
+                                        onChange={(e) => setRePassword(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                         <div className="form-group mt-15 w-100">
                             <button type="submit" className="button button-contactForm w-100">
-                                ĐĂNG NHẬP
+                                ĐỔI MẬT KHẨU
                             </button>
                         </div>
                         <div className="form-group mt-25 w-100 d-flex justify-content-between">
                             <div className="text-left">
-                                Chưa có tài khoản? <Link to='/dang-ky'>Đăng Ký</Link>
-                            </div>
-                            <div className="text-right">
-                                <Link to='/quen-mat-khau'>Quên Mật Khẩu?</Link>
+                                Đã có tài khoản? <Link to='/dang-nhap'>Đăng Nhập</Link>
                             </div>
                         </div>
                     </form>
@@ -97,4 +103,4 @@ const DangNhap = () => {
     )
 }
 
-export default DangNhap;
+export default MatKhauMoi;

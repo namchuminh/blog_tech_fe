@@ -4,10 +4,9 @@ import { toast } from 'react-toastify';
 import DangNhapServices from '../../services/User/DangNhapServices';
 import { useNavigate } from 'react-router-dom';
 
-const DangNhap = () => {
+const QuenMatKhau = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
 
     // Check for access token in localStorage
     useEffect(() => {
@@ -19,16 +18,13 @@ const DangNhap = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Handle login logic here (e.g., API call)
-        const login = await DangNhapServices.login({ username, password });
-        if(login.response && login.response.status == 400){
+        const password_reset = await DangNhapServices.password_reset({ email });
+        if(password_reset.response && password_reset.response.status == 400){
           //Hiển thị thông báo login.response.data.message
-          toast.error(login.response.data.message);
+          toast.error(password_reset.response.data.message);
         }else{
-          // Lưu token và refreshToken
-          toast.success(login.data.message);
-          localStorage.setItem('token', login.data.token);
-          localStorage.setItem('refreshToken', login.data.refreshToken);
-          navigate('/tai-khoan');
+          toast.success("Yêu cầu đổi mật khẩu đã được gửi tới Email của bạn!");
+          navigate('/dang-nhap');
         }
     };
 
@@ -38,10 +34,10 @@ const DangNhap = () => {
                 <div className="archive-header text-center mb-30">
                     <div className="container">
                         <h2>
-                            <span className="text-dark">Đăng Nhập</span>
+                            <span className="text-dark">Quên Mật Khẩu?</span>
                         </h2>
                         <div className="breadcrumb">
-                            Truy cập hệ thống để sử dụng chức năng
+                            Cấp lại mật khẩu cho tài khoản của bạn để truy cập hệ thống.
                         </div>
                     </div>
                 </div>
@@ -52,42 +48,25 @@ const DangNhap = () => {
                                 <div className="form-group">
                                     <input
                                         className="form-control"
-                                        name="name"
-                                        id="name"
-                                        type="text"
-                                        placeholder="Nhập tài khoản"
-                                        required
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-sm-12 mt-15">
-                                <div className="form-group">
-                                    <input
-                                        className="form-control"
                                         name="email"
-                                        id="password"
-                                        type="password"
-                                        placeholder="Nhập mật khẩu"
+                                        id="email"
+                                        type="text"
+                                        placeholder="Nhập email của tài khoản"
                                         required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                     />
                                 </div>
                             </div>
                         </div>
                         <div className="form-group mt-15 w-100">
                             <button type="submit" className="button button-contactForm w-100">
-                                ĐĂNG NHẬP
+                                LẤY MẬT KHẨU
                             </button>
                         </div>
                         <div className="form-group mt-25 w-100 d-flex justify-content-between">
                             <div className="text-left">
-                                Chưa có tài khoản? <Link to='/dang-ky'>Đăng Ký</Link>
-                            </div>
-                            <div className="text-right">
-                                <Link to='/quen-mat-khau'>Quên Mật Khẩu?</Link>
+                                Đã có tài khoản? <Link to='/dang-nhap'>Đăng Nhập</Link>
                             </div>
                         </div>
                     </form>
@@ -97,4 +76,4 @@ const DangNhap = () => {
     )
 }
 
-export default DangNhap;
+export default QuenMatKhau;
