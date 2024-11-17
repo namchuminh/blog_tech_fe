@@ -39,8 +39,8 @@ const Header = () => {
         {/* Main Sidebar Container */}
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
           {/* Brand Logo */}
-          <Link to="/" className="brand-link">
-            <img src="/dist/img/AdminLTELogo.png" className="brand-image img-circle elevation-3" style={{ opacity: '.8' }} />
+          <Link to="/admin/" className="brand-link">
+            <img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" className="brand-image img-circle elevation-3" style={{ opacity: '.8' }} />
             <span className="brand-text font-weight-light text-center">QUẢN TRỊ VIÊN</span>
           </Link>
           {/* Sidebar */}
@@ -49,7 +49,7 @@ const Header = () => {
             <nav className="mt-2">
               <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li className="nav-item has-treeview menu-open">
-                  <Link to="/" className="nav-link active">
+                  <Link to="/admin/" className="nav-link active">
                     <i className="nav-icon fas fa-tachometer-alt" />
                     <p>
                       Trang Chủ
