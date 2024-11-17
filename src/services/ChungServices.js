@@ -11,6 +11,16 @@ const ChungServices = {
             throw error;
         }
     },
+
+    // Lấy thông báo user
+    notification: async () => {
+        try {
+            const response = await axiosInstance.get(`/notifications`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default ChungServices;

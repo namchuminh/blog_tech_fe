@@ -1,10 +1,47 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import ChungServices from '../../services/ChungServices'; // Import service để gọi API
+import { toast } from 'react-toastify';
 
 const Header = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
+    const [notifications, setNotifications] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const fetchNotifications = async () => {
+        try {
+            const response = await ChungServices.notification();
+            if (response.status == 200) {
+                setNotifications(response.data.notifications);
+            } else {
+                console.error("Failed to fetch statistics");
+            }
+        } catch (error) {
+            console.error("Error fetching statistics:", error);
+        }
+    }
+
+    const toggleDropdown = () => {
+        if (!localStorage.getItem('token')) {
+            toast.error("Vui lòng đăng nhập!");
+            return;
+        }
+
+        if (!isDropdownOpen) {
+            fetchNotifications(); // Gọi API khi dropdown được mở
+        }
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleHiddenNoti = () => {
+        if (!localStorage.getItem('token')) {
+            toast.error("Vui lòng đăng nhập!");
+            return;
+        }
+        setIsDropdownOpen(false);
+    };
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -109,7 +146,7 @@ const Header = () => {
                                     <nav>
                                         <ul className="main-menu d-none d-lg-inline float-right">
                                             <li>
-                                                <Link to="/">
+                                                <Link to="/" onClick={handleHiddenNoti}>
                                                     <span className="mr-15">
                                                         <i className="fa-solid fa-house"></i>
                                                     </span>
@@ -117,7 +154,7 @@ const Header = () => {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link to="/xu-huong">
+                                                <Link to="/xu-huong" onClick={handleHiddenNoti}>
                                                     <span className="mr-15">
                                                         <i className="fa-solid fa-arrow-trend-up"></i>
                                                     </span>
@@ -125,7 +162,7 @@ const Header = () => {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link to={ !localStorage.getItem('token') ? '/dang-nhap' : '/theo-doi' }>
+                                                <Link to={!localStorage.getItem('token') ? '/dang-nhap' : '/theo-doi'} onClick={handleHiddenNoti}>
                                                     <span className="mr-15">
                                                         <i className="fa-solid fa-fire"></i>
                                                     </span>
@@ -136,24 +173,25 @@ const Header = () => {
                                     </nav>
                                 </div>
                                 <div className="off-canvas-toggle-cover">
-                                        <form
-                                            action="#"
-                                            method="get"
-                                            className="search-form d-lg-inline float-left position-relative d-none mr-20"
-                                            onSubmit={handleSearch}
-                                        >
-                                            <input
-                                                type="text"
-                                                className="search_field"
-                                                placeholder="Nhập tên bài viết"
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
-                                                name="s"
-                                            />
-                                            <span className="search-icon">
-                                                <i className="ti-search mr-5" />
-                                            </span>
-                                        </form>
+                                    <form
+                                        action="#"
+                                        method="get"
+                                        className="search-form d-lg-inline float-left position-relative d-none mr-20"
+                                        onSubmit={handleSearch}
+                                        onClick={handleHiddenNoti}
+                                    >
+                                        <input
+                                            type="text"
+                                            className="search_field"
+                                            placeholder="Nhập tên bài viết"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            name="s"
+                                        />
+                                        <span className="search-icon">
+                                            <i className="ti-search mr-5" />
+                                        </span>
+                                    </form>
                                     <div className="d-inline tools-icon">
                                         <Link
                                             className="red-tooltip text-danger"
@@ -162,29 +200,109 @@ const Header = () => {
                                             data-placement="top"
                                             title=""
                                             data-original-title="Viết bài mới"
+                                            onClick={handleHiddenNoti}
                                         >
-                                            <i className="fa-regular fa-pen-to-square ml-15" style={{ fontSize: 20}}></i>
+                                            <i className="fa-regular fa-pen-to-square ml-15" style={{ fontSize: 20 }}></i>
                                         </Link>
                                         <Link
                                             className="red-tooltip text-success"
-                                            to="/thong-bao"
+                                            to="#"
+                                            onClick={toggleDropdown}
                                             data-toggle="tooltip"
                                             data-placement="top"
-                                            title=""
-                                            data-original-title="Thông báo"
+                                            title="Thông báo"
                                         >
-                                            <i className="fa-regular fa-bell ml-15" style={{ fontSize: 20}}></i>
-                                            <span className="notification bg-success">5</span>
+                                            <i className="fa-regular fa-bell ml-15" style={{ fontSize: 20 }}></i>
+                                            {/* <span className="notification bg-success">{notifications.length}</span> */}
                                         </Link>
+
+                                        {/* Dropdown thông báo */}
+                                        {isDropdownOpen && (
+                                            <div
+                                                className="notification-dropdown"
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "100%",
+                                                    right: 0,
+                                                    background: "white",
+                                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                                    borderRadius: 4,
+                                                    width: 300,
+                                                    zIndex: 1000,
+                                                    padding: 10,
+                                                }}
+                                            >
+                                                {notifications.length > 0 ? (
+                                                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                                                        {notifications.map((notification) => (
+                                                            <li
+                                                                key={notification.notification_id}
+                                                                style={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    padding: "8px 0",
+                                                                    borderBottom: "1px solid #f0f0f0",
+                                                                }}
+                                                            >
+                                                                <img
+                                                                    src={(notification.type == "comment") || (notification.type == "like") ? `http://127.0.0.1:3001/${notification.article.image_url}` : `http://127.0.0.1:3001/${notification.user.avatar_url}`}
+                                                                    alt={notification.user.fullname}
+                                                                    style={{
+                                                                        width: 50,
+                                                                        height: 50,
+                                                                        borderRadius: "100%",
+                                                                        marginRight: 10,
+                                                                    }}
+                                                                />
+                                                                <Link 
+                                                                    style={{padding: 0, lineHeight: "30px"}}
+                                                                    to={(notification.type == "comment") || (notification.type == "like") ? `/bai-viet/${notification.article.slug}` : `/tai-khoan`} 
+                                                                    onClick={handleHiddenNoti}>
+                                                                    <p style={{ margin: 0, fontSize: 14, textAlign: 'left' }}>
+                                                                        <strong>
+                                                                            <Link style={{padding: 0}} to={`/nguoi-dung/${notification.user.username}`} onClick={handleHiddenNoti}>
+                                                                                {notification.user.fullname}
+                                                                            </Link>
+                                                                        </strong> 
+                                                                        {
+                                                                            notification.type == "comment" ? " đã bình luận!" : null
+                                                                        }
+                                                                        {
+                                                                            notification.type == "like" ? " đã thích bài viết!" : null
+                                                                        }
+                                                                        {
+                                                                            notification.type == "follow" ? " đã theo dõi bạn!" : null
+                                                                        }
+                                                                    </p>
+                                                                    <p
+                                                                        style={{
+                                                                            margin: 0,
+                                                                            fontSize: 12,
+                                                                            color: "#888",
+                                                                            textAlign: 'left'
+                                                                        }}
+                                                                    >
+                                                                        {new Date(notification.createdAt).toLocaleString()}
+                                                                    </p>
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p style={{ textAlign: "center", margin: 0 }}>Không có thông báo nào.</p>
+                                                )}
+                                            </div>
+                                        )}
                                         <Link
                                             className="red-tooltip text-primary"
-                                            to={ !localStorage.getItem('token') ? '/dang-nhap' : '/tai-khoan' }
+                                            to={!localStorage.getItem('token') ? '/dang-nhap' : '/tai-khoan'}
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title=""
                                             data-original-title="Tài khoản"
+                                            onClick={handleHiddenNoti}
                                         >
-                                            <i className="fa-regular fa-user ml-15" style={{ fontSize: 20}}></i>
+                                            <i className="fa-regular fa-user ml-15" style={{ fontSize: 20 }}></i>
                                         </Link>
                                     </div>
                                 </div>

@@ -60,7 +60,7 @@ const NguoiDung = () => {
 
         fetchUser();
         fetchArticles();
-    }, []);
+    }, [username]);
      
     const handelFollow = async () => {
         if (!localStorage.getItem('token')) {
